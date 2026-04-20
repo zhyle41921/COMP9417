@@ -1,0 +1,182 @@
+[
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 0.25,
+      "iters": 3
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 0.5,
+      "iters": 3
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 1.0,
+      "iters": 3
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 2.0,
+      "iters": 3
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 4.0,
+      "iters": 3
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 0.25,
+      "iters": 1
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 0.25,
+      "iters": 2
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 0.25,
+      "iters": 3
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 0.25,
+      "iters": 4
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 0.25,
+      "iters": 5
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 0.25,
+      "iters": 1
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 0.25,
+      "iters": 2
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 0.25,
+      "iters": 3
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 0.25,
+      "iters": 4
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  },
+  {
+    "params": {
+      "max_leaf_size": 512,
+      "verbose": false,
+      "agop_power": 0.25,
+      "iters": 5
+    },
+    "val_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9580734580734581
+    }
+  }
+]
