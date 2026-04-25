@@ -1,0 +1,10 @@
+{
+  "params": {
+    "verbose": false,
+    "max_leaf_size": 2048
+  },
+  "val_metrics": {
+    "accuracy": 0.8545761670761671,
+    "roc_auc": 0.9061849861303745
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "xrfm": {
+    "params": {
+      "verbose": false,
+      "max_leaf_size": 2048
+    },
+    "test_metrics": {
+      "accuracy": 0.8458325655672256,
+      "roc_auc": 0.8954889711471048
+    }
+  },
+  "xgboost": {
+    "params": {
+      "subsample": 1.0,
+      "colsample_bytree": 1.0,
+      "learning_rate": 0.1,
+      "n_estimators": 200,
+      "max_depth": 5,
+      "reg_alpha": 1.0,
+      "reg_lambda": 1.0
+    },
+    "test_metrics": {
+      "accuracy": 0.8734107241569928,
+      "roc_auc": 0.928007897959666
+    }
+  },
+  "xrfm_agop": {
+    "selected_agop_index": 16,
+    "selection_rule": "largest_top_eigenvalue",
+    "top_eigenvalue": 2.063958168029785,
+    "diagonal_csv": "/Users/rylelin/COMP9417/outputs/adult/xrfm_highest_agop_diagonal.csv",
+    "top_eigenvector_loadings_csv": "/Users/rylelin/COMP9417/outputs/adult/xrfm_highest_agop_top_eigenvector_loadings.csv"
+  }
+}

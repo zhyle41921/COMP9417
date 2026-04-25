@@ -1,20 +1,25 @@
-import json
+SEED = 42
+
 import os
+os.environ["PYTHONHASHSEED"] = str(SEED)
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+
+import json
 import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, roc_auc_score
-from xgboost import XGBClassifier
 from xrfm import xRFM
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
 from src.utils.preprocessing import preprocess_data
-
-SEED = 42
 
 
 def load_ad_data():
@@ -42,13 +47,12 @@ def load_ad_data():
 
 
 def load_best_params():
-    xrfm_path = ROOT / "outputs" / "ad" / "xrfm_best_params.json"
-    xgb_path = ROOT / "outputs" / "ad" / "xgb_best_params.json"
+    output_dir = ROOT / "outputs" / "ad"
 
-    with open(xrfm_path, "r") as f:
+    with open(output_dir / "xrfm_best_params.json", "r") as f:
         xrfm_result = json.load(f)
 
-    with open(xgb_path, "r") as f:
+    with open(output_dir / "xgb_best_params.json", "r") as f:
         xgb_result = json.load(f)
 
     return xrfm_result["params"], xgb_result["params"]
@@ -73,8 +77,7 @@ def evaluate_model(model, X, y):
     }
 
     if hasattr(model, "predict_proba"):
-        y_score = model.predict_proba(X)
-        y_score = np.asarray(y_score)
+        y_score = np.asarray(model.predict_proba(X))
 
         if y_score.ndim == 2 and y_score.shape[1] >= 2:
             y_score = y_score[:, 1]
@@ -87,6 +90,9 @@ def evaluate_model(model, X, y):
 
 
 def main():
+    output_dir = ROOT / "outputs" / "ad"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     df = load_ad_data()
 
     X_train_df, X_val_df, X_test_df, y_train_s, y_val_s, y_test_s = preprocess_data(
@@ -101,12 +107,21 @@ def main():
     print("Best XGB params:", best_xgb_params)
 
     X_train_np, X_val_np, X_test_np, y_train_np, y_val_np, y_test_np = to_numpy(
-        X_train_df, X_val_df, X_test_df, y_train_s, y_val_s, y_test_s
+        X_train_df,
+        X_val_df,
+        X_test_df,
+        y_train_s,
+        y_val_s,
+        y_test_s,
     )
 
+    # Run xRFM first. Do not import XGBoost before this point.
     xrfm_model = xRFM(**best_xrfm_params, random_state=SEED)
     xrfm_model.fit(X_train_np, y_train_np, X_val=X_val_np, y_val=y_val_np)
     xrfm_metrics = evaluate_model(xrfm_model, X_test_np, y_test_np)
+
+    # Import XGBoost only after xRFM has finished fitting.
+    from xgboost import XGBClassifier
 
     xgb_model = XGBClassifier(
         objective="binary:logistic",
@@ -129,24 +144,23 @@ def main():
         },
     }
 
-    output_path = ROOT / "outputs" / "ad" / "test_metrics.json"
-    with open(output_path, "w") as f:
+    with open(output_dir / "test_metrics.json", "w") as f:
         json.dump(results, f, indent=2)
 
     metrics_df = pd.DataFrame([
         {
             "model": "xrfm",
-            "accuracy": results["xrfm"]["test_metrics"]["accuracy"],
-            "roc_auc": results["xrfm"]["test_metrics"]["roc_auc"],
+            "accuracy": xrfm_metrics["accuracy"],
+            "roc_auc": xrfm_metrics["roc_auc"],
         },
         {
             "model": "xgboost",
-            "accuracy": results["xgboost"]["test_metrics"]["accuracy"],
-            "roc_auc": results["xgboost"]["test_metrics"]["roc_auc"],
+            "accuracy": xgb_metrics["accuracy"],
+            "roc_auc": xgb_metrics["roc_auc"],
         },
     ])
 
-    metrics_csv_path = ROOT / "outputs" / "ad" / "metrics.csv"
+    metrics_csv_path = output_dir / "metrics.csv"
     metrics_df.to_csv(metrics_csv_path, index=False)
 
     print("\nTest metrics:")

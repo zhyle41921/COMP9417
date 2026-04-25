@@ -1,0 +1,32 @@
+[
+  {
+    "params": {
+      "verbose": false,
+      "max_leaf_size": 1024
+    },
+    "val_metrics": {
+      "accuracy": 0.8476658476658476,
+      "roc_auc": 0.9028892731242982
+    }
+  },
+  {
+    "params": {
+      "verbose": false,
+      "max_leaf_size": 2048
+    },
+    "val_metrics": {
+      "accuracy": 0.8545761670761671,
+      "roc_auc": 0.9061849861303745
+    }
+  },
+  {
+    "params": {
+      "verbose": false,
+      "max_leaf_size": 4096
+    },
+    "val_metrics": {
+      "accuracy": 0.8504299754299754,
+      "roc_auc": 0.9023925104022192
+    }
+  }
+]

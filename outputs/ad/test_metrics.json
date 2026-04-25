@@ -1,29 +1,27 @@
 {
   "xrfm": {
     "params": {
-      "max_leaf_size": 512,
       "verbose": false,
-      "agop_power": 0.25,
-      "iters": 3
+      "max_leaf_size": 1024
     },
     "test_metrics": {
-      "accuracy": 0.9587628865979382,
-      "roc_auc": 0.9718933027756557
+      "accuracy": 0.9628865979381444,
+      "roc_auc": 0.9811560988031576
     }
   },
   "xgboost": {
     "params": {
       "subsample": 1.0,
       "colsample_bytree": 1.0,
-      "learning_rate": 0.03,
-      "n_estimators": 300,
+      "learning_rate": 0.05,
+      "n_estimators": 100,
       "max_depth": 6,
-      "reg_alpha": 1.0,
+      "reg_alpha": 0.1,
       "reg_lambda": 1.0
     },
     "test_metrics": {
-      "accuracy": 0.9587628865979382,
-      "roc_auc": 0.969840208810797
+      "accuracy": 0.9567010309278351,
+      "roc_auc": 0.9717978100331041
     }
   }
 }
