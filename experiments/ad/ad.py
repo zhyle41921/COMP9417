@@ -55,7 +55,10 @@ def load_best_params():
     with open(output_dir / "xgb_best_params.json", "r") as f:
         xgb_result = json.load(f)
 
-    return xrfm_result["params"], xgb_result["params"]
+    with open(output_dir / "rf_best_params.json", "r") as f:
+        rf_result = json.load(f)
+
+    return xrfm_result["params"], xgb_result["params"], rf_result["params"]
 
 
 def to_numpy(X_train, X_val, X_test, y_train, y_val, y_test):
@@ -101,10 +104,16 @@ def main():
         random_state=SEED,
     )
 
-    best_xrfm_params, best_xgb_params = load_best_params()
+    print(f"Dataset split complete.")
+    print(f"Train size: {len(X_train_df)}")
+    print(f"Val size:   {len(X_val_df)}")
+    print(f"Test size:  {len(X_test_df)}")
+
+    best_xrfm_params, best_xgb_params, best_rf_params = load_best_params()
 
     print("Best xRFM params:", best_xrfm_params)
     print("Best XGB params:", best_xgb_params)
+    print("Best RF params:", best_rf_params)
 
     X_train_np, X_val_np, X_test_np, y_train_np, y_val_np, y_test_np = to_numpy(
         X_train_df,
@@ -133,6 +142,17 @@ def main():
     xgb_model.fit(X_train_df, y_train_s)
     xgb_metrics = evaluate_model(xgb_model, X_test_df, y_test_s)
 
+    # Import Random Forest only after XGBoost has finished.
+    from sklearn.ensemble import RandomForestClassifier
+
+    rf_model = RandomForestClassifier(
+        random_state=SEED,
+        n_jobs=1,
+        **best_rf_params,
+    )
+    rf_model.fit(X_train_df, y_train_s)
+    rf_metrics = evaluate_model(rf_model, X_test_df, y_test_s)
+
     results = {
         "xrfm": {
             "params": best_xrfm_params,
@@ -141,6 +161,10 @@ def main():
         "xgboost": {
             "params": best_xgb_params,
             "test_metrics": xgb_metrics,
+        },
+        "random_forest": {
+            "params": best_rf_params,
+            "test_metrics": rf_metrics,
         },
     }
 
@@ -157,6 +181,11 @@ def main():
             "model": "xgboost",
             "accuracy": xgb_metrics["accuracy"],
             "roc_auc": xgb_metrics["roc_auc"],
+        },
+        {
+            "model": "random_forest",
+            "accuracy": rf_metrics["accuracy"],
+            "roc_auc": rf_metrics["roc_auc"],
         },
     ])
 

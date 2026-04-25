@@ -5,8 +5,8 @@
       "max_leaf_size": 1024
     },
     "test_metrics": {
-      "accuracy": 0.9628865979381444,
-      "roc_auc": 0.9811560988031576
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9764769544181309
     }
   },
   "xgboost": {
@@ -21,7 +21,19 @@
     },
     "test_metrics": {
       "accuracy": 0.9567010309278351,
-      "roc_auc": 0.9717978100331041
+      "roc_auc": 0.9739782276546982
+    }
+  },
+  "random_forest": {
+    "params": {
+      "n_estimators": 500,
+      "max_depth": null,
+      "min_samples_split": 2,
+      "max_features": "log2"
+    },
+    "test_metrics": {
+      "accuracy": 0.9587628865979382,
+      "roc_auc": 0.9789438502673797
     }
   }
 }
