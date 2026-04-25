@@ -1,0 +1,17 @@
+{
+  "params": {
+    "subsample": 1.0,
+    "colsample_bytree": 1.0,
+    "learning_rate": 0.2,
+    "n_estimators": 500,
+    "max_depth": 6,
+    "reg_alpha": 0.0,
+    "reg_lambda": 1.0
+  },
+  "val_metrics": {
+    "mse": 0.4247160851955414,
+    "rmse": 0.6517024514266778,
+    "mae": 0.4363199770450592,
+    "r2": 0.44375908374786377
+  }
+}

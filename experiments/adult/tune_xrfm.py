@@ -14,46 +14,16 @@ import json
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
-from src.utils.preprocessing import preprocess_data
 from src.tuning.xrfm_tuner import tune_xrfm
+from experiments.adult.load_data import load_adult_splits
 
 
 random.seed(SEED)
 np.random.seed(SEED)
-
-
-COLUMNS = [
-    "age", "workclass", "fnlwgt", "education", "education_num",
-    "marital_status", "occupation", "relationship", "race", "sex",
-    "capital_gain", "capital_loss", "hours_per_week", "native_country",
-    "income",
-]
-
-
-def load_adult_data():
-    data_path = ROOT / "experiments" / "adult" / "adult.data"
-
-    df = pd.read_csv(
-        data_path,
-        header=None,
-        names=COLUMNS,
-        na_values="?",
-        skipinitialspace=True,
-        low_memory=False,
-    )
-
-    df["income"] = df["income"].str.strip()
-    df["income"] = df["income"].map({"<=50K": 0, ">50K": 1})
-
-    if df["income"].isna().any():
-        raise ValueError("Found unmapped labels in adult dataset.")
-
-    return df
 
 
 def to_numpy(X_train, X_val, X_test, y_train, y_val, y_test):
@@ -71,25 +41,18 @@ def main():
     output_dir = ROOT / "outputs" / "adult"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    df = load_adult_data()
-
-    X_train, X_val, X_test, y_train, y_val, y_test = preprocess_data(
-        df,
-        target_col="income",
-        random_state=SEED,
-        do_remove_duplicates=False,
-    )
+    X_train_df, X_val_df, X_test_df, y_train_s, y_val_s, y_test_s = load_adult_splits()
 
     print("Columns after preprocessing:")
-    print(list(X_train.columns))
+    print(list(X_train_df.columns))
 
     X_train, X_val, X_test, y_train, y_val, y_test = to_numpy(
-        X_train,
-        X_val,
-        X_test,
-        y_train,
-        y_val,
-        y_test,
+        X_train_df,
+        X_val_df,
+        X_test_df,
+        y_train_s,
+        y_val_s,
+        y_test_s,
     )
 
     print("Shapes:")
@@ -105,7 +68,7 @@ def main():
         results_path=output_dir / "xrfm_results.json",
         best_path=output_dir / "xrfm_best_params.json",
         seed=SEED,
-        max_leaf_size_values=[1024, 2048, 4096]
+        max_leaf_size_values=[1024, 2048, 4096],
     )
 
     print("\nBest result:")
