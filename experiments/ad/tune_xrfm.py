@@ -13,41 +13,16 @@ import json
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
-from src.utils.preprocessing import preprocess_data
 from src.tuning.xrfm_tuner import tune_xrfm
+from experiments.ad.load_data import load_ad_splits
 
 
 random.seed(SEED)
 np.random.seed(SEED)
-
-
-def load_ad_data():
-    n_features = 1558
-    col_names = [f"x{i}" for i in range(n_features)] + ["label"]
-
-    data_path = ROOT / "experiments" / "ad" / "ad.data"
-
-    df = pd.read_csv(
-        data_path,
-        header=None,
-        names=col_names,
-        na_values="?",
-        skipinitialspace=True,
-        low_memory=False,
-    )
-
-    df["label"] = df["label"].str.strip()
-    df["label"] = df["label"].map({"nonad.": 0, "ad.": 1})
-
-    if df["label"].isna().any():
-        raise ValueError("Found unmapped labels in ad dataset.")
-
-    return df
 
 
 def to_numpy(X_train, X_val, X_test, y_train, y_val, y_test):
@@ -65,13 +40,7 @@ def main():
     output_dir = ROOT / "outputs" / "ad"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    df = load_ad_data()
-
-    X_train, X_val, X_test, y_train, y_val, y_test = preprocess_data(
-        df,
-        target_col="label",
-        random_state=SEED,
-    )
+    X_train, X_val, X_test, y_train, y_val, y_test = load_ad_splits()
 
     X_train, X_val, X_test, y_train, y_val, y_test = to_numpy(
         X_train,
