@@ -1,11 +1,12 @@
 SEED = 42
 
 import os
+
 os.environ["PYTHONHASHSEED"] = str(SEED)
-os.environ["OMP_NUM_THREADS"] = "1"
-os.environ["MKL_NUM_THREADS"] = "1"
-os.environ["OPENBLAS_NUM_THREADS"] = "1"
-os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["OMP_NUM_THREADS"] = "4"
+os.environ["MKL_NUM_THREADS"] = "4"
+os.environ["OPENBLAS_NUM_THREADS"] = "4"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "4"
 
 import random
 import sys
@@ -26,26 +27,31 @@ random.seed(SEED)
 np.random.seed(SEED)
 
 
-def load_ad_data():
-    n_features = 1558
-    col_names = [f"x{i}" for i in range(n_features)] + ["label"]
+COLUMNS = [
+    "age", "workclass", "fnlwgt", "education", "education_num",
+    "marital_status", "occupation", "relationship", "race", "sex",
+    "capital_gain", "capital_loss", "hours_per_week", "native_country",
+    "income",
+]
 
-    data_path = ROOT / "experiments" / "ad" / "ad.data"
+
+def load_adult_data():
+    data_path = ROOT / "experiments" / "adult" / "adult.data"
 
     df = pd.read_csv(
         data_path,
         header=None,
-        names=col_names,
+        names=COLUMNS,
         na_values="?",
         skipinitialspace=True,
         low_memory=False,
     )
 
-    df["label"] = df["label"].str.strip()
-    df["label"] = df["label"].map({"nonad.": 0, "ad.": 1})
+    df["income"] = df["income"].str.strip()
+    df["income"] = df["income"].map({"<=50K": 0, ">50K": 1})
 
-    if df["label"].isna().any():
-        raise ValueError("Found unmapped labels in ad dataset.")
+    if df["income"].isna().any():
+        raise ValueError("Found unmapped labels in adult dataset.")
 
     return df
 
@@ -62,16 +68,20 @@ def to_numpy(X_train, X_val, X_test, y_train, y_val, y_test):
 
 
 def main():
-    output_dir = ROOT / "outputs" / "ad"
+    output_dir = ROOT / "outputs" / "adult"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    df = load_ad_data()
+    df = load_adult_data()
 
     X_train, X_val, X_test, y_train, y_val, y_test = preprocess_data(
         df,
-        target_col="label",
+        target_col="income",
         random_state=SEED,
+        do_remove_duplicates=False,
     )
+
+    print("Columns after preprocessing:")
+    print(list(X_train.columns))
 
     X_train, X_val, X_test, y_train, y_val, y_test = to_numpy(
         X_train,
@@ -95,6 +105,7 @@ def main():
         results_path=output_dir / "xrfm_results.json",
         best_path=output_dir / "xrfm_best_params.json",
         seed=SEED,
+        max_leaf_size_values=[1024, 2048, 4096]
     )
 
     print("\nBest result:")
