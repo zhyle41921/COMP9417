@@ -6,7 +6,7 @@
     },
     "test_metrics": {
       "accuracy": 0.9506493506493506,
-      "roc_auc": 0.9717548076923077
+      "roc_auc": 0.9659615384615384
     }
   },
   "xgboost": {
@@ -23,5 +23,24 @@
       "accuracy": 0.9558441558441558,
       "roc_auc": 0.9731250000000001
     }
+  },
+  "random_forest": {
+    "params": {
+      "n_estimators": 500,
+      "max_depth": null,
+      "min_samples_split": 2,
+      "max_features": "log2"
+    },
+    "test_metrics": {
+      "accuracy": 0.9584415584415584,
+      "roc_auc": 0.9819711538461539
+    }
+  },
+  "xrfm_agop": {
+    "selected_agop_index": 0,
+    "selection_rule": "largest_top_eigenvalue",
+    "top_eigenvalue": 5.098933696746826,
+    "diagonal_csv": "/home/keegan/Desktop/COMP9417/outputs/ad/xrfm_highest_agop_diagonal.csv",
+    "top_eigenvector_loadings_csv": "/home/keegan/Desktop/COMP9417/outputs/ad/xrfm_highest_agop_top_eigenvector_loadings.csv"
   }
 }
