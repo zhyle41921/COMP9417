@@ -5,8 +5,8 @@
       "max_leaf_size": 2048
     },
     "test_metrics": {
-      "accuracy": 0.8458325655672256,
-      "roc_auc": 0.8954889711471048
+      "accuracy": 0.8430686075793871,
+      "roc_auc": 0.8936386944822385
     }
   },
   "xgboost": {
@@ -20,15 +20,8 @@
       "reg_lambda": 1.0
     },
     "test_metrics": {
-      "accuracy": 0.8734107241569928,
-      "roc_auc": 0.928007897959666
+      "accuracy": 0.8714452429211965,
+      "roc_auc": 0.9259804754876162
     }
-  },
-  "xrfm_agop": {
-    "selected_agop_index": 16,
-    "selection_rule": "largest_top_eigenvalue",
-    "top_eigenvalue": 2.063958168029785,
-    "diagonal_csv": "/Users/rylelin/COMP9417/outputs/adult/xrfm_highest_agop_diagonal.csv",
-    "top_eigenvector_loadings_csv": "/Users/rylelin/COMP9417/outputs/adult/xrfm_highest_agop_top_eigenvector_loadings.csv"
   }
 }

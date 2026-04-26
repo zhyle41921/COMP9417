@@ -2,38 +2,26 @@
   "xrfm": {
     "params": {
       "verbose": false,
-      "max_leaf_size": 1024
+      "max_leaf_size": 2048
     },
     "test_metrics": {
-      "accuracy": 0.9587628865979382,
-      "roc_auc": 0.9764769544181309
+      "accuracy": 0.9506493506493506,
+      "roc_auc": 0.9717548076923077
     }
   },
   "xgboost": {
     "params": {
       "subsample": 1.0,
       "colsample_bytree": 1.0,
-      "learning_rate": 0.05,
-      "n_estimators": 100,
-      "max_depth": 6,
-      "reg_alpha": 0.1,
-      "reg_lambda": 1.0
+      "learning_rate": 0.03,
+      "n_estimators": 200,
+      "max_depth": 4,
+      "reg_alpha": 0.0,
+      "reg_lambda": 0.0
     },
     "test_metrics": {
-      "accuracy": 0.9567010309278351,
-      "roc_auc": 0.9739782276546982
-    }
-  },
-  "random_forest": {
-    "params": {
-      "n_estimators": 500,
-      "max_depth": null,
-      "min_samples_split": 2,
-      "max_features": "log2"
-    },
-    "test_metrics": {
-      "accuracy": 0.9587628865979382,
-      "roc_auc": 0.9789438502673797
+      "accuracy": 0.9558441558441558,
+      "roc_auc": 0.9731250000000001
     }
   }
 }

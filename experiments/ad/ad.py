@@ -19,31 +19,7 @@ from xrfm import xRFM
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
-from src.utils.preprocessing import preprocess_data
-
-
-def load_ad_data():
-    n_features = 1558
-    col_names = [f"x{i}" for i in range(n_features)] + ["label"]
-
-    data_path = ROOT / "experiments" / "ad" / "ad.data"
-
-    df = pd.read_csv(
-        data_path,
-        header=None,
-        names=col_names,
-        na_values="?",
-        skipinitialspace=True,
-        low_memory=False,
-    )
-
-    df["label"] = df["label"].str.strip()
-    df["label"] = df["label"].map({"nonad.": 0, "ad.": 1})
-
-    if df["label"].isna().any():
-        raise ValueError("Found unmapped labels in ad dataset.")
-
-    return df
+from experiments.ad.load_data import load_ad_splits
 
 
 def load_best_params():
@@ -96,13 +72,7 @@ def main():
     output_dir = ROOT / "outputs" / "ad"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    df = load_ad_data()
-
-    X_train_df, X_val_df, X_test_df, y_train_s, y_val_s, y_test_s = preprocess_data(
-        df,
-        target_col="label",
-        random_state=SEED,
-    )
+    X_train_df, X_val_df, X_test_df, y_train_s, y_val_s, y_test_s = load_ad_splits()
 
     best_xrfm_params, best_xgb_params, best_rf_params = load_best_params()
 
@@ -134,6 +104,7 @@ def main():
         n_jobs=1,
         **best_xgb_params,
     )
+
     xgb_model.fit(X_train_df, y_train_s)
     xgb_metrics = evaluate_model(xgb_model, X_test_df, y_test_s)
 

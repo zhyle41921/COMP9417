@@ -1,0 +1,31 @@
+{
+  "xrfm": {
+    "params": {
+      "verbose": false,
+      "max_leaf_size": 2048
+    },
+    "test_metrics": {
+      "mse": 0.38250038027763367,
+      "rmse": 0.6184661512788179,
+      "mae": 0.44791579246520996,
+      "r2": 0.4966046214103699
+    }
+  },
+  "xgboost": {
+    "params": {
+      "subsample": 1.0,
+      "colsample_bytree": 1.0,
+      "learning_rate": 0.2,
+      "n_estimators": 500,
+      "max_depth": 6,
+      "reg_alpha": 0.0,
+      "reg_lambda": 1.0
+    },
+    "test_metrics": {
+      "mse": 0.42619144916534424,
+      "rmse": 0.6528334007733858,
+      "mae": 0.4405650794506073,
+      "r2": 0.4391043186187744
+    }
+  }
+}

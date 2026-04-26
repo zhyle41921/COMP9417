@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
 from src.utils.preprocessing import preprocess_data
+from experiments.adult.load_data import load_adult_splits
 
 
 COLUMNS = [
@@ -41,28 +42,6 @@ def clean_income_labels(series):
         .str.replace(".", "", regex=False)
         .map({"<=50K": 0, ">50K": 1})
     )
-
-
-def load_adult_data(filename):
-    data_path = ROOT / "experiments" / "adult" / filename
-
-    df = pd.read_csv(
-        data_path,
-        header=None,
-        names=COLUMNS,
-        na_values="?",
-        skipinitialspace=True,
-        low_memory=False,
-        comment="|",
-    )
-
-    df["income"] = clean_income_labels(df["income"])
-
-    if df["income"].isna().any():
-        raise ValueError(f"Found unmapped labels in {filename}.")
-
-    return df
-
 
 def load_best_params():
     output_dir = ROOT / "outputs" / "adult"
@@ -128,6 +107,18 @@ def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
 
     if best_agop is None:
         raise ValueError("No AGOP matrices found.")
+
+    # Save full AGOP matrix
+    agop_df = pd.DataFrame(
+        best_agop,
+        index=feature_names,
+        columns=feature_names,
+    )
+
+    agop_path = output_dir / "xrfm_best_agop.csv"
+    agop_df.to_csv(agop_path)
+
+    print("\nSaved full AGOP matrix to:", agop_path)
 
     if best_agop.shape[0] != len(feature_names):
         raise ValueError(
@@ -249,10 +240,7 @@ def make_metrics_csv(xrfm_metrics, xgb_metrics, agop_summary, output_dir):
         for i, (_, row) in enumerate(top_eigen_df.iterrows())
     ])
 
-    metrics_df = pd.concat(
-        [model_metrics_df, agop_diag_df, agop_eigen_df],
-        ignore_index=True,
-    )
+    metrics_df = model_metrics_df
 
     metrics_csv_path = output_dir / "metrics.csv"
     metrics_df.to_csv(metrics_csv_path, index=False)
@@ -264,34 +252,7 @@ def main():
     output_dir = ROOT / "outputs" / "adult"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    train_df = load_adult_data("adult.data")
-    test_df = load_adult_data("adult.test")
-
-    n_train = len(train_df)
-
-    combined_df = pd.concat([train_df, test_df], axis=0, ignore_index=True)
-
-    X_all, y_all = preprocess_data(
-        combined_df,
-        target_col="income",
-        random_state=SEED,
-        do_remove_duplicates=False,
-        do_split=False,
-    )
-
-    X_train_full = X_all.iloc[:n_train]
-    y_train_full = y_all.iloc[:n_train]
-
-    X_test_df = X_all.iloc[n_train:]
-    y_test_s = y_all.iloc[n_train:]
-
-    X_train_df, X_val_df, y_train_s, y_val_s = train_test_split(
-        X_train_full,
-        y_train_full,
-        test_size=0.05,
-        random_state=SEED,
-        stratify=y_train_full,
-    )
+    X_train_df, X_val_df, X_test_df, y_train_s, y_val_s, y_test_s = load_adult_splits()
 
     print("Shapes:")
     print("X_train:", X_train_df.shape)
@@ -352,14 +313,7 @@ def main():
         "xgboost": {
             "params": best_xgb_params,
             "test_metrics": xgb_metrics,
-        },
-        "xrfm_agop": {
-            "selected_agop_index": agop_summary["best_agop_index"],
-            "selection_rule": "largest_top_eigenvalue",
-            "top_eigenvalue": agop_summary["top_eigenvalue"],
-            "diagonal_csv": str(agop_summary["diag_path"]),
-            "top_eigenvector_loadings_csv": str(agop_summary["eigen_path"]),
-        },
+        }
     }
 
     with open(output_dir / "test_metrics.json", "w") as f:
