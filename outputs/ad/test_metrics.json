@@ -35,12 +35,5 @@
       "accuracy": 0.9584415584415584,
       "roc_auc": 0.9819711538461539
     }
-  },
-  "xrfm_agop": {
-    "selected_agop_index": 0,
-    "selection_rule": "largest_top_eigenvalue",
-    "top_eigenvalue": 5.098933696746826,
-    "diagonal_csv": "/home/keegan/Desktop/COMP9417/outputs/ad/xrfm_highest_agop_diagonal.csv",
-    "top_eigenvector_loadings_csv": "/home/keegan/Desktop/COMP9417/outputs/ad/xrfm_highest_agop_top_eigenvector_loadings.csv"
   }
 }
