@@ -1,0 +1,29 @@
+{
+  "xrfm": {
+    "params": {
+      "n_estimators": 100,
+      "max_depth": 5
+    },
+    "test_metrics": {
+      "mse": 1990.665283203125,
+      "rmse": 44.61687088012695,
+      "mae": 26.296537399291992,
+      "r2": 0.936653838787207
+    },
+    "agop_top_eigenvalue": 1.0018641948699951,
+    "agop_index": 0
+  },
+  "xgboost": {
+    "params": {
+      "n_estimators": 100,
+      "max_depth": 5,
+      "learning_rate": 0.1
+    },
+    "test_metrics": {
+      "mse": 2102.2976669992086,
+      "rmse": 45.85081969822577,
+      "mae": 29.226679459259223,
+      "r2": 0.933101521668507
+    }
+  }
+}
