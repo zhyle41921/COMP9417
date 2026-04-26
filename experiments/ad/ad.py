@@ -104,11 +104,6 @@ def main():
         random_state=SEED,
     )
 
-    print(f"Dataset split complete.")
-    print(f"Train size: {len(X_train_df)}")
-    print(f"Val size:   {len(X_val_df)}")
-    print(f"Test size:  {len(X_test_df)}")
-
     best_xrfm_params, best_xgb_params, best_rf_params = load_best_params()
 
     print("Best xRFM params:", best_xrfm_params)
