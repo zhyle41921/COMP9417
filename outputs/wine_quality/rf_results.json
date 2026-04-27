@@ -1,0 +1,202 @@
+[
+  {
+    "stage": "n_estimators",
+    "params": {
+      "n_estimators": 50
+    },
+    "val_metrics": {
+      "mse": 0.41203941493456503,
+      "rmse": 0.6419029637994866,
+      "mae": 0.4581986143187066,
+      "r2": 0.4603614371201714
+    }
+  },
+  {
+    "stage": "n_estimators",
+    "params": {
+      "n_estimators": 100
+    },
+    "val_metrics": {
+      "mse": 0.4099727482678983,
+      "rmse": 0.6402911433620633,
+      "mae": 0.4576751347190146,
+      "r2": 0.46306810301068757
+    }
+  },
+  {
+    "stage": "n_estimators",
+    "params": {
+      "n_estimators": 200
+    },
+    "val_metrics": {
+      "mse": 0.4077916281755196,
+      "rmse": 0.6385856467033374,
+      "mae": 0.45550808314087765,
+      "r2": 0.465924665925443
+    }
+  },
+  {
+    "stage": "n_estimators",
+    "params": {
+      "n_estimators": 500
+    },
+    "val_metrics": {
+      "mse": 0.4080693610469592,
+      "rmse": 0.6388030690650751,
+      "mae": 0.4560200153964588,
+      "r2": 0.4655609255594104
+    }
+  },
+  {
+    "stage": "max_depth",
+    "params": {
+      "n_estimators": 200,
+      "max_depth": null
+    },
+    "val_metrics": {
+      "mse": 0.4077916281755196,
+      "rmse": 0.6385856467033374,
+      "mae": 0.45550808314087765,
+      "r2": 0.465924665925443
+    }
+  },
+  {
+    "stage": "max_depth",
+    "params": {
+      "n_estimators": 200,
+      "max_depth": 5
+    },
+    "val_metrics": {
+      "mse": 0.5199519756676187,
+      "rmse": 0.7210769554406927,
+      "mae": 0.5637075646502253,
+      "r2": 0.319030833590615
+    }
+  },
+  {
+    "stage": "max_depth",
+    "params": {
+      "n_estimators": 200,
+      "max_depth": 10
+    },
+    "val_metrics": {
+      "mse": 0.44421467779476054,
+      "rmse": 0.6664943194017189,
+      "mae": 0.5021618397486615,
+      "r2": 0.4182222339740015
+    }
+  },
+  {
+    "stage": "max_depth",
+    "params": {
+      "n_estimators": 200,
+      "max_depth": 20
+    },
+    "val_metrics": {
+      "mse": 0.4096746931976759,
+      "rmse": 0.6400583514006172,
+      "mae": 0.45689899596756944,
+      "r2": 0.46345845889394555
+    }
+  },
+  {
+    "stage": "max_depth",
+    "params": {
+      "n_estimators": 200,
+      "max_depth": 30
+    },
+    "val_metrics": {
+      "mse": 0.40770113121204343,
+      "rmse": 0.638514785429471,
+      "mae": 0.455456761611496,
+      "r2": 0.46604318772104114
+    }
+  },
+  {
+    "stage": "min_samples_split",
+    "params": {
+      "n_estimators": 200,
+      "max_depth": 30,
+      "min_samples_split": 2
+    },
+    "val_metrics": {
+      "mse": 0.40770113121204343,
+      "rmse": 0.638514785429471,
+      "mae": 0.455456761611496,
+      "r2": 0.46604318772104114
+    }
+  },
+  {
+    "stage": "min_samples_split",
+    "params": {
+      "n_estimators": 200,
+      "max_depth": 30,
+      "min_samples_split": 5
+    },
+    "val_metrics": {
+      "mse": 0.41425009738748847,
+      "rmse": 0.6436226358569814,
+      "mae": 0.4639192001117521,
+      "r2": 0.45746615706045013
+    }
+  },
+  {
+    "stage": "min_samples_split",
+    "params": {
+      "n_estimators": 200,
+      "max_depth": 30,
+      "min_samples_split": 10
+    },
+    "val_metrics": {
+      "mse": 0.42353684482652054,
+      "rmse": 0.6507970842179001,
+      "mae": 0.47757814416944955,
+      "r2": 0.4453035171279984
+    }
+  },
+  {
+    "stage": "max_features",
+    "params": {
+      "n_estimators": 200,
+      "max_depth": 30,
+      "min_samples_split": 2,
+      "max_features": "sqrt"
+    },
+    "val_metrics": {
+      "mse": 0.38999839257261193,
+      "rmse": 0.6244985128666136,
+      "mae": 0.4495244579163459,
+      "r2": 0.48922805812946346
+    }
+  },
+  {
+    "stage": "max_features",
+    "params": {
+      "n_estimators": 200,
+      "max_depth": 30,
+      "min_samples_split": 2,
+      "max_features": "log2"
+    },
+    "val_metrics": {
+      "mse": 0.38999839257261193,
+      "rmse": 0.6244985128666136,
+      "mae": 0.4495244579163459,
+      "r2": 0.48922805812946346
+    }
+  },
+  {
+    "stage": "max_features",
+    "params": {
+      "n_estimators": 200,
+      "max_depth": 30,
+      "min_samples_split": 2,
+      "max_features": null
+    },
+    "val_metrics": {
+      "mse": 0.40770113121204343,
+      "rmse": 0.638514785429471,
+      "mae": 0.455456761611496,
+      "r2": 0.46604318772104114
+    }
+  }
+]

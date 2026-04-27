@@ -14,20 +14,20 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
-from experiments.bike_sharing.load_data import load_bike_splits
+from experiments.wine_quality.load_data import load_wine_splits
 from src.tuning.rf_tuner_reg import tune_rf
 
 random.seed(SEED)
 np.random.seed(SEED)
 
 def main():
-    output_dir = ROOT / "outputs" / "bike_sharing"
+    output_dir = ROOT / "outputs" / "wine_quality"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     results_path = output_dir / "rf_results.json"
     best_path = output_dir / "rf_best_params.json"
 
-    X_train, X_val, X_test, y_train, y_val, y_test = load_bike_splits()
+    X_train, X_val, X_test, y_train, y_val, y_test = load_wine_splits()
 
     print("Shapes:")
     print("X_train:", X_train.shape)
