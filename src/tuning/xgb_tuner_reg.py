@@ -6,9 +6,7 @@ import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from xgboost import XGBRegressor
 
-
 SEED = 42
-
 
 def evaluate_xgb_regression(model, X, y):
     y_pred = model.predict(X)
@@ -21,20 +19,17 @@ def evaluate_xgb_regression(model, X, y):
         "r2": float(r2_score(y, y_pred)),
     }
 
-
 def pick_best_regression(results):
     if not results:
         raise ValueError("No successful XGB regression tuning results.")
 
     return min(results, key=lambda r: r["val_metrics"]["rmse"])
 
-
 def clean_best_result(result):
     return {
         "params": result["params"],
         "val_metrics": result["val_metrics"],
     }
-
 
 def tune_xgb_regression(
     X_train,

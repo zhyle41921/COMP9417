@@ -7,7 +7,7 @@ sys.path.append(str(ROOT))
 from src.utils.plotting import plot_agop_heatmap
 
 plot_agop_heatmap(
-    ROOT / "outputs" / "adult" / "xrfm_best_agop.csv",
-    output_path=ROOT / "outputs" / "adult" / "agop_heatmap.png",
+    ROOT / "outputs" / "insurance_company_benchmark" / "xrfm_best_agop.csv",
+    output_path=ROOT / "outputs" / "insurance_company_benchmark" / "agop_heatmap.png",
     top_k=20,
 )

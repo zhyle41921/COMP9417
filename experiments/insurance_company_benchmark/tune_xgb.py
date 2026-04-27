@@ -18,17 +18,17 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
-from src.tuning.xgb_tuner_reg import tune_xgb_regression
-from experiments.bike_sharing.load_data import load_bike_splits
+from src.tuning.xgb_tuner import tune_xgb
+from experiments.insurance_company_benchmark.load_data import load_insurance_splits
 
 random.seed(SEED)
 np.random.seed(SEED)
 
 def main():
-    output_dir = ROOT / "outputs" / "bike_sharing"
+    output_dir = ROOT / "outputs" / "insurance_company_benchmark"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    X_train, X_val, X_test, y_train, y_val, y_test = load_bike_splits()
+    X_train, X_val, X_test, y_train, y_val, y_test = load_insurance_splits()
 
     print("Column names after preprocessing:")
     print(list(X_train.columns))
@@ -38,7 +38,7 @@ def main():
     print("X_val:", X_val.shape)
     print("X_test:", X_test.shape)
 
-    best_result, results = tune_xgb_regression(
+    best_result, results = tune_xgb(
         X_train=X_train,
         y_train=y_train,
         X_val=X_val,
@@ -48,7 +48,7 @@ def main():
         seed=SEED,
     )
 
-    print("\nBest XGB regression result:")
+    print("\nBest XGB result:")
     print(json.dumps(best_result, indent=2))
 
 if __name__ == "__main__":

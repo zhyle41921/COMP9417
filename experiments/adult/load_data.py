@@ -12,7 +12,6 @@ from sklearn.preprocessing import StandardScaler
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
-
 COLUMNS = [
     "age", "workclass", "fnlwgt", "education", "education_num",
     "marital_status", "occupation", "relationship", "race", "sex",
@@ -28,7 +27,6 @@ NUMERIC_COLS = [
     "hours_per_week",
 ]
 
-
 def clean_income_labels(series):
     return (
         series.astype(str)
@@ -36,7 +34,6 @@ def clean_income_labels(series):
         .str.replace(".", "", regex=False)
         .map({"<=50K": 0, ">50K": 1})
     )
-
 
 def group_adult_categories(df):
     df = df.copy()
@@ -176,7 +173,6 @@ def group_adult_categories(df):
 
     return df
 
-
 def load_adult_file(filename):
     data_path = ROOT / "experiments" / "adult" / "data" / filename
 
@@ -202,7 +198,6 @@ def load_adult_file(filename):
 
     return df
 
-
 def preprocess_adult_combined(combined_df):
     combined_df = combined_df.copy()
 
@@ -222,7 +217,6 @@ def preprocess_adult_combined(combined_df):
     X_all[NUMERIC_COLS] = scaler.fit_transform(X_all[NUMERIC_COLS])
 
     return X_all, y_all
-
 
 def save_adult_splits(seed=SEED):
     output_dir = ROOT / "experiments" / "adult" / "data"
@@ -280,7 +274,6 @@ def save_adult_splits(seed=SEED):
         cols = [c for c in X_train.columns if c.startswith(prefix)]
         print(prefix, X_train[cols].sum(axis=1).value_counts().head())
 
-
 def load_adult_splits():
     split_dir = ROOT / "experiments" / "adult" / "data"
 
@@ -294,10 +287,8 @@ def load_adult_splits():
 
     return X_train, X_val, X_test, y_train, y_val, y_test
 
-
 def main():
     save_adult_splits(seed=SEED)
-
 
 if __name__ == "__main__":
     main()

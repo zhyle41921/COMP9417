@@ -26,14 +26,12 @@ sys.path.append(str(ROOT))
 from src.utils.preprocessing import preprocess_data
 from experiments.adult.load_data import load_adult_splits
 
-
 COLUMNS = [
     "age", "workclass", "fnlwgt", "education", "education_num",
     "marital_status", "occupation", "relationship", "race", "sex",
     "capital_gain", "capital_loss", "hours_per_week", "native_country",
     "income",
 ]
-
 
 def clean_income_labels(series):
     return (
@@ -57,7 +55,6 @@ def load_best_params():
 
     return xrfm_result["params"], xgb_result["params"], rf_result["params"]
 
-
 def evaluate_model(model, X, y):
     y_pred = model.predict(X)
 
@@ -77,7 +74,6 @@ def evaluate_model(model, X, y):
 
     return metrics
 
-
 def to_numpy_agop(agop):
     if hasattr(agop, "detach"):
         agop = agop.detach().cpu().numpy()
@@ -88,7 +84,6 @@ def to_numpy_agop(agop):
         agop = np.diag(agop)
 
     return agop
-
 
 def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
     agops = model.collect_best_agops()
@@ -263,7 +258,6 @@ def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, agop_summary, output
 
     return metrics_df, metrics_csv_path
 
-
 def main():
     output_dir = ROOT / "outputs" / "adult"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -362,7 +356,6 @@ def main():
 
     print("\nSaved combined metrics to:", metrics_csv_path)
     print(metrics_df)
-
 
 if __name__ == "__main__":
     main()

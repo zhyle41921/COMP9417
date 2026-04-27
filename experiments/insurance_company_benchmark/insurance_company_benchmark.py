@@ -15,18 +15,17 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import accuracy_score, roc_auc_score
 from xrfm import xRFM
-from xgboost import XGBRegressor
-from sklearn.ensemble import RandomForestRegressor
+from xgboost import XGBClassifier
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
-from experiments.bike_sharing.load_data import load_bike_splits
+from experiments.insurance_company_benchmark.load_data import load_insurance_splits
 
 def load_best_params():
-    output_dir = ROOT / "outputs" / "bike_sharing"
+    output_dir = ROOT / "outputs" / "insurance_company_benchmark"
 
     with open(output_dir / "xrfm_best_params.json", "r") as f:
         xrfm_result = json.load(f)
@@ -34,21 +33,26 @@ def load_best_params():
     with open(output_dir / "xgb_best_params.json", "r") as f:
         xgb_result = json.load(f)
 
-    with open(output_dir / "rf_best_params.json", "r") as f:
-        rf_result = json.load(f)
-
-    return xrfm_result["params"], xgb_result["params"], rf_result["params"]
+    return xrfm_result["params"], xgb_result["params"]
 
 def evaluate_model(model, X, y):
     y_pred = model.predict(X)
-    mse = mean_squared_error(y, y_pred)
 
-    return {
-        "mse": float(mse),
-        "rmse": float(np.sqrt(mse)),
-        "mae": float(mean_absolute_error(y, y_pred)),
-        "r2": float(r2_score(y, y_pred)),
+    metrics = {
+        "accuracy": float(accuracy_score(y, y_pred))
     }
+
+    if hasattr(model, "predict_proba"):
+        y_score = np.asarray(model.predict_proba(X))
+
+        if y_score.ndim == 2 and y_score.shape[1] >= 2:
+            y_score = y_score[:, 1]
+        elif y_score.ndim == 2 and y_score.shape[1] == 1:
+            y_score = y_score[:, 0]
+
+        metrics["roc_auc"] = float(roc_auc_score(y, y_score))
+
+    return metrics
 
 def to_numpy_agop(agop):
     if hasattr(agop, "detach"):
@@ -82,8 +86,7 @@ def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
         raise ValueError("No AGOP matrices found.")
 
     agop_df = pd.DataFrame(best_agop, index=feature_names, columns=feature_names)
-    agop_path = output_dir / "xrfm_best_agop.csv"
-    agop_df.to_csv(agop_path)
+    agop_df.to_csv(output_dir / "xrfm_best_agop.csv")
 
     diag = np.diag(best_agop)
     diag_df = pd.DataFrame({
@@ -103,10 +106,11 @@ def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
         "abs_loading": np.abs(top_eigenvector),
     }).sort_values("abs_loading", ascending=False)
 
-    diag_path = output_dir / "xrfm_highest_agop_diagonal.csv"
-    eigen_path = output_dir / "xrfm_highest_agop_top_eigenvector_loadings.csv"
-    diag_df.to_csv(diag_path, index=False)
-    eigen_df.to_csv(eigen_path, index=False)
+    diag_df.to_csv(output_dir / "xrfm_highest_agop_diagonal.csv", index=False)
+    eigen_df.to_csv(
+        output_dir / "xrfm_highest_agop_top_eigenvector_loadings.csv",
+        index=False,
+    )
 
     return {
         "top_diag_df": diag_df.head(top_k),
@@ -115,29 +119,17 @@ def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
         "best_agop_index": best_index,
     }
 
-
-def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, output_dir):
+def make_metrics_csv(xrfm_metrics, xgb_metrics, output_dir):
     metrics_df = pd.DataFrame([
         {
             "model": "xrfm",
-            "mse": xrfm_metrics["mse"],
-            "rmse": xrfm_metrics["rmse"],
-            "mae": xrfm_metrics["mae"],
-            "r2": xrfm_metrics["r2"],
+            "accuracy": xrfm_metrics["accuracy"],
+            "roc_auc": xrfm_metrics.get("roc_auc", ""),
         },
         {
             "model": "xgboost",
-            "mse": xgb_metrics["mse"],
-            "rmse": xgb_metrics["rmse"],
-            "mae": xgb_metrics["mae"],
-            "r2": xgb_metrics["r2"],
-        },
-        {
-            "model": "random_forest",
-            "mse": rf_metrics["mse"],
-            "rmse": rf_metrics["rmse"],
-            "mae": rf_metrics["mae"],
-            "r2": rf_metrics["r2"],
+            "accuracy": xgb_metrics["accuracy"],
+            "roc_auc": xgb_metrics.get("roc_auc", ""),
         },
     ])
 
@@ -146,24 +138,19 @@ def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, output_dir):
     return metrics_df, metrics_csv_path
 
 def main():
-    output_dir = ROOT / "outputs" / "bike_sharing"
+    output_dir = ROOT / "outputs" / "insurance_company_benchmark"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    X_train_df, X_val_df, X_test_df, y_train_s, y_val_s, y_test_s = load_bike_splits()
-
-    best_xrfm_params, best_xgb_params, best_rf_params = load_best_params()
-
-    print("Best xRFM params:", best_xrfm_params)
-    print("Best XGB params:", best_xgb_params)
-    print("Best RF params:", best_rf_params)
+    X_train_df, X_val_df, X_test_df, y_train_s, y_val_s, y_test_s = load_insurance_splits()
+    best_xrfm_params, best_xgb_params = load_best_params()
 
     X_train_np = np.asarray(X_train_df, dtype=np.float32)
     X_val_np = np.asarray(X_val_df, dtype=np.float32)
     X_test_np = np.asarray(X_test_df, dtype=np.float32)
 
-    y_train_np = np.asarray(y_train_s, dtype=np.float32)
-    y_val_np = np.asarray(y_val_s, dtype=np.float32)
-    y_test_np = np.asarray(y_test_s, dtype=np.float32)
+    y_train_np = np.asarray(y_train_s, dtype=np.int64)
+    y_val_np = np.asarray(y_val_s, dtype=np.int64)
+    y_test_np = np.asarray(y_test_s, dtype=np.int64)
 
     xrfm_model = xRFM(
         **best_xrfm_params,
@@ -180,23 +167,15 @@ def main():
         top_k=20,
     )
 
-    xgb_model = XGBRegressor(
-        objective="reg:squarederror",
-        eval_metric="rmse",
+    xgb_model = XGBClassifier(
+        objective="binary:logistic",
+        eval_metric="logloss",
         random_state=SEED,
         n_jobs=N_THREADS,
         **best_xgb_params,
     )
     xgb_model.fit(X_train_df, y_train_s)
     xgb_metrics = evaluate_model(xgb_model, X_test_df, y_test_s)
-
-    rf_model = RandomForestRegressor(
-        random_state=SEED,
-        n_jobs=N_THREADS,
-        **best_rf_params,
-    )
-    rf_model.fit(X_train_df, y_train_s)
-    rf_metrics = evaluate_model(rf_model, X_test_df, y_test_s)
 
     results = {
         "xrfm": {
@@ -209,10 +188,6 @@ def main():
             "params": best_xgb_params,
             "test_metrics": xgb_metrics,
         },
-        "random_forest": {
-            "params": best_rf_params,
-            "test_metrics": rf_metrics,
-        },
     }
 
     with open(output_dir / "test_metrics.json", "w") as f:
@@ -221,7 +196,6 @@ def main():
     metrics_df, metrics_csv_path = make_metrics_csv(
         xrfm_metrics=xrfm_metrics,
         xgb_metrics=xgb_metrics,
-        rf_metrics=rf_metrics,
         output_dir=output_dir,
     )
 

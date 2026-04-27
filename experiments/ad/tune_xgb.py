@@ -25,7 +25,6 @@ sys.path.append(
 from src.tuning.xgb_tuner import tune_xgb
 from experiments.ad.load_data import load_ad_splits
 
-
 def main():
     ROOT = Path(__file__).resolve().parents[2]
 
@@ -54,7 +53,6 @@ def main():
 
     print("\nBest result:")
     print(json.dumps(best_result, indent=2))
-
 
 if __name__ == "__main__":
     main()

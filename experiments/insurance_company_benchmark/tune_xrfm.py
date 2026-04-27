@@ -1,11 +1,12 @@
 SEED = 42
 
 import os
+
 os.environ["PYTHONHASHSEED"] = str(SEED)
-os.environ["OMP_NUM_THREADS"] = "1"
-os.environ["MKL_NUM_THREADS"] = "1"
-os.environ["OPENBLAS_NUM_THREADS"] = "1"
-os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["OMP_NUM_THREADS"] = "4"
+os.environ["MKL_NUM_THREADS"] = "4"
+os.environ["OPENBLAS_NUM_THREADS"] = "4"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "4"
 
 import random
 import sys
@@ -18,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
 from src.tuning.xrfm_tuner import tune_xrfm
-from experiments.ad.load_data import load_ad_splits
+from experiments.insurance_company_benchmark.load_data import load_insurance_splits
 
 random.seed(SEED)
 np.random.seed(SEED)
@@ -34,10 +35,13 @@ def to_numpy(X_train, X_val, X_test, y_train, y_val, y_test):
     )
 
 def main():
-    output_dir = ROOT / "outputs" / "ad"
+    output_dir = ROOT / "outputs" / "insurance_company_benchmark"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    X_train, X_val, X_test, y_train, y_val, y_test = load_ad_splits()
+    X_train, X_val, X_test, y_train, y_val, y_test = load_insurance_splits()
+
+    print("Columns after preprocessing:")
+    print(list(X_train.columns))
 
     X_train, X_val, X_test, y_train, y_val, y_test = to_numpy(
         X_train,
@@ -61,6 +65,7 @@ def main():
         results_path=output_dir / "xrfm_results.json",
         best_path=output_dir / "xrfm_best_params.json",
         seed=SEED,
+        max_leaf_size_values=[256, 512, 1024, 2048],
     )
 
     print("\nBest result:")

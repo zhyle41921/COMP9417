@@ -3,7 +3,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-
 def plot_agop_heatmap(
     csv_path,
     output_path=None,

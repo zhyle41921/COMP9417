@@ -21,10 +21,8 @@ sys.path.append(str(ROOT))
 from src.tuning.xgb_tuner import tune_xgb
 from experiments.adult.load_data import load_adult_splits
 
-
 random.seed(SEED)
 np.random.seed(SEED)
-
 
 def main():
     output_dir = ROOT / "outputs" / "adult"
@@ -52,7 +50,6 @@ def main():
 
     print("\nBest XGB result:")
     print(json.dumps(best_result, indent=2))
-
 
 if __name__ == "__main__":
     main()

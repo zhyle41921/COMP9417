@@ -6,9 +6,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score, roc_auc_score
 from xrfm import xRFM
 
-
 SEED = 42
-
 
 def evaluate_model(model, X, y):
     y_pred = model.predict(X)
@@ -33,7 +31,6 @@ def evaluate_model(model, X, y):
 
     return metrics
 
-
 def pick_best(results):
     if not results:
         raise ValueError("No successful xRFM tuning results.")
@@ -45,7 +42,6 @@ def pick_best(results):
             r["val_metrics"]["accuracy"]
         )
     )
-
 
 def tune_xrfm(
     X_train,
