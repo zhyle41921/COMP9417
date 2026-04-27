@@ -1,38 +1,26 @@
 {
   "xrfm": {
-    "params": {
-      "verbose": false,
-      "max_leaf_size": 2048
-    },
     "test_metrics": {
       "accuracy": 0.9506493506493506,
-      "roc_auc": 0.9717548076923077
+      "inference_time_per_sample_seconds": 0.0001809438962682888,
+      "roc_auc": 0.9717548076923077,
+      "training_time_seconds": 2.5822936000768095
     }
   },
   "xgboost": {
-    "params": {
-      "subsample": 1.0,
-      "colsample_bytree": 1.0,
-      "learning_rate": 0.03,
-      "n_estimators": 200,
-      "max_depth": 4,
-      "reg_alpha": 0.0,
-      "reg_lambda": 0.0
-    },
     "test_metrics": {
-      "accuracy": 0.9558441558441558,
-      "roc_auc": 0.9731250000000001
+      "accuracy": 0.9584415584415584,
+      "inference_time_per_sample_seconds": 0.00014818051962980203,
+      "roc_auc": 0.9771875,
+      "training_time_seconds": 0.8654747999971732
     }
   },
   "random_forest": {
-    "params": {
-      "n_estimators": 200,
-      "max_depth": null,
-      "min_samples_split": 5
-    },
     "test_metrics": {
-      "accuracy": 0.961038961038961,
-      "roc_auc": 0.983173076923077
+      "accuracy": 0.9584415584415584,
+      "inference_time_per_sample_seconds": 0.00013598077930510044,
+      "roc_auc": 0.9819711538461539,
+      "training_time_seconds": 1.0624108000192791
     }
   }
 }

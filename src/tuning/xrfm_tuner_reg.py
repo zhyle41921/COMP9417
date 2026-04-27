@@ -1,3 +1,4 @@
+import itertools
 import json
 import random
 from pathlib import Path
@@ -8,9 +9,9 @@ from xrfm import xRFM
 
 SEED = 42
 
+
 def evaluate_regression_model(model, X, y):
     y_pred = model.predict(X)
-
     mse = mean_squared_error(y, y_pred)
 
     return {
@@ -20,14 +21,13 @@ def evaluate_regression_model(model, X, y):
         "r2": float(r2_score(y, y_pred)),
     }
 
+
 def pick_best_regression(results):
     if not results:
         raise ValueError("No successful xRFM regression tuning results.")
 
-    return min(
-        results,
-        key=lambda r: r["val_metrics"]["rmse"]
-    )
+    return min(results, key=lambda r: r["val_metrics"]["rmse"])
+
 
 def tune_xrfm_regression(
     X_train,
@@ -38,7 +38,7 @@ def tune_xrfm_regression(
     best_path,
     seed=SEED,
     base_params=None,
-    max_leaf_size_values=None,
+    param_grid=None,
 ):
     random.seed(seed)
     np.random.seed(seed)
@@ -54,26 +54,31 @@ def tune_xrfm_regression(
             "verbose": False,
         }
 
-    if max_leaf_size_values is None:
-        max_leaf_size_values = [256, 512, 1024, 2048]
+    if param_grid is None:
+        param_grid = {
+            "max_leaf_size": [256, 512, 1024, 2048],
+        }
+
+    keys = list(param_grid.keys())
+    values = list(param_grid.values())
 
     results_all = []
 
-    def run_model(params):
-        model = xRFM(**params, random_state=seed)
-        model.fit(X_train, y_train, X_val=X_val, y_val=y_val)
-        return evaluate_regression_model(model, X_val, y_val)
+    for combo in itertools.product(*values):
+        grid_params = dict(zip(keys, combo))
 
-    for max_leaf_size in max_leaf_size_values:
         params = {
             **base_params,
-            "max_leaf_size": max_leaf_size,
+            **grid_params,
         }
 
-        print(f"[MAX_LEAF_SIZE] Testing {params}")
+        print(f"[GRID] Testing {params}")
 
         try:
-            metrics = run_model(params)
+            model = xRFM(**params, random_state=seed)
+            model.fit(X_train, y_train, X_val=X_val, y_val=y_val)
+
+            metrics = evaluate_regression_model(model, X_val, y_val)
 
             result = {
                 "params": params,

@@ -65,7 +65,9 @@ def main():
         results_path=output_dir / "xrfm_results.json",
         best_path=output_dir / "xrfm_best_params.json",
         seed=SEED,
-        max_leaf_size_values=[1024, 2048, 4096],
+        param_grid = {
+            "max_leaf_size": [2048, 4096, 8192],
+        }
     )
 
     print("\nBest result:")

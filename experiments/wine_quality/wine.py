@@ -11,6 +11,7 @@ os.environ["VECLIB_MAXIMUM_THREADS"] = str(N_THREADS)
 
 import sys
 import json
+import time
 from pathlib import Path
 
 import numpy as np
@@ -26,6 +27,7 @@ sys.path.append(str(ROOT))
 from src.utils.preprocessing import preprocess_data
 from experiments.wine_quality.load_data import load_wine_splits
 
+
 def load_best_params():
     output_dir = ROOT / "outputs" / "wine_quality"
 
@@ -40,8 +42,12 @@ def load_best_params():
 
     return xrfm_result["params"], xgb_result["params"], rf_result["params"]
 
+
 def evaluate_model(model, X, y):
+    start = time.perf_counter()
     y_pred = model.predict(X)
+    inference_time = time.perf_counter() - start
+
     mse = mean_squared_error(y, y_pred)
 
     return {
@@ -49,7 +55,16 @@ def evaluate_model(model, X, y):
         "rmse": float(np.sqrt(mse)),
         "mae": float(mean_absolute_error(y, y_pred)),
         "r2": float(r2_score(y, y_pred)),
+        "inference_time_seconds": float(inference_time),
     }
+
+
+def fit_with_time(model, *fit_args, **fit_kwargs):
+    start = time.perf_counter()
+    model.fit(*fit_args, **fit_kwargs)
+    training_time = time.perf_counter() - start
+    return model, float(training_time)
+
 
 def to_numpy_agop(agop):
     if hasattr(agop, "detach"):
@@ -61,6 +76,7 @@ def to_numpy_agop(agop):
         agop = np.diag(agop)
 
     return agop
+
 
 def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
     agops = model.collect_best_agops()
@@ -83,7 +99,12 @@ def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
     if best_agop is None:
         raise ValueError("No AGOP matrices found.")
 
-    # Save full AGOP matrix
+    if best_agop.shape[0] != len(feature_names):
+        raise ValueError(
+            f"AGOP dimension {best_agop.shape[0]} does not match "
+            f"{len(feature_names)} feature names."
+        )
+
     agop_df = pd.DataFrame(
         best_agop,
         index=feature_names,
@@ -94,12 +115,6 @@ def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
     agop_df.to_csv(agop_path)
 
     print("\nSaved full AGOP matrix to:", agop_path)
-
-    if best_agop.shape[0] != len(feature_names):
-        raise ValueError(
-            f"AGOP dimension {best_agop.shape[0]} does not match "
-            f"{len(feature_names)} feature names."
-        )
 
     diag = np.diag(best_agop)
 
@@ -132,108 +147,38 @@ def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
         "top_eigen_df": eigen_df.head(top_k),
         "top_eigenvalue": top_eigenvalue,
         "best_agop_index": best_index,
-        "diag_path": diag_path,
-        "eigen_path": eigen_path,
+        "diag_path": str(diag_path),
+        "eigen_path": str(eigen_path),
     }
 
-def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, agop_summary, output_dir):
-    model_metrics_df = pd.DataFrame([
+
+def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, output_dir):
+    metrics_df = pd.DataFrame([
         {
-            "row_type": "model_metric",
             "model": "xrfm",
-            "mse": xrfm_metrics["mse"],
             "rmse": xrfm_metrics["rmse"],
-            "mae": xrfm_metrics["mae"],
-            "r2": xrfm_metrics["r2"],
-            "agop_summary_type": "",
-            "rank": "",
-            "feature": "",
-            "value": "",
-            "abs_value": "",
-            "top_eigenvalue": "",
-            "selected_agop_index": "",
+            "training_time_seconds": xrfm_metrics["training_time_seconds"],
+            "inference_time_seconds": xrfm_metrics["inference_time_seconds"],
         },
         {
-            "row_type": "model_metric",
             "model": "xgboost",
-            "mse": xgb_metrics["mse"],
             "rmse": xgb_metrics["rmse"],
-            "mae": xgb_metrics["mae"],
-            "r2": xgb_metrics["r2"],
-            "agop_summary_type": "",
-            "rank": "",
-            "feature": "",
-            "value": "",
-            "abs_value": "",
-            "top_eigenvalue": "",
-            "selected_agop_index": "",
+            "training_time_seconds": xgb_metrics["training_time_seconds"],
+            "inference_time_seconds": xgb_metrics["inference_time_seconds"],
         },
         {
-            "row_type": "model_metric",
             "model": "random_forest",
-            "mse": rf_metrics["mse"],
             "rmse": rf_metrics["rmse"],
-            "mae": rf_metrics["mae"],
-            "r2": rf_metrics["r2"],
-            "agop_summary_type": "",
-            "rank": "",
-            "feature": "",
-            "value": "",
-            "abs_value": "",
-            "top_eigenvalue": "",
-            "selected_agop_index": "",
+            "training_time_seconds": rf_metrics["training_time_seconds"],
+            "inference_time_seconds": rf_metrics["inference_time_seconds"],
         },
     ])
-
-    top_diag_df = agop_summary["top_diag_df"]
-    top_eigen_df = agop_summary["top_eigen_df"]
-    top_eigenvalue = agop_summary["top_eigenvalue"]
-    best_agop_index = agop_summary["best_agop_index"]
-
-    agop_diag_df = pd.DataFrame([
-        {
-            "row_type": "agop_summary",
-            "model": "xrfm",
-            "mse": "",
-            "rmse": "",
-            "mae": "",
-            "r2": "",
-            "agop_summary_type": "top_diagonal",
-            "rank": i + 1,
-            "feature": row["feature"],
-            "value": row["agop_diagonal"],
-            "abs_value": row["abs_agop_diagonal"],
-            "top_eigenvalue": top_eigenvalue,
-            "selected_agop_index": best_agop_index,
-        }
-        for i, (_, row) in enumerate(top_diag_df.iterrows())
-    ])
-
-    agop_eigen_df = pd.DataFrame([
-        {
-            "row_type": "agop_summary",
-            "model": "xrfm",
-            "mse": "",
-            "rmse": "",
-            "mae": "",
-            "r2": "",
-            "agop_summary_type": "top_eigenvector_loading",
-            "rank": i + 1,
-            "feature": row["feature"],
-            "value": row["top_eigenvector_loading"],
-            "abs_value": row["abs_loading"],
-            "top_eigenvalue": top_eigenvalue,
-            "selected_agop_index": best_agop_index,
-        }
-        for i, (_, row) in enumerate(top_eigen_df.iterrows())
-    ])
-
-    metrics_df = model_metrics_df
 
     metrics_csv_path = output_dir / "metrics.csv"
     metrics_df.to_csv(metrics_csv_path, index=False)
 
     return metrics_df, metrics_csv_path
+
 
 def main():
     output_dir = ROOT / "outputs" / "wine_quality"
@@ -257,7 +202,8 @@ def main():
         random_state=SEED,
     )
 
-    xrfm_model.fit(
+    xrfm_model, xrfm_training_time = fit_with_time(
+        xrfm_model,
         X_train_np,
         y_train_np,
         X_val=X_val_np,
@@ -265,6 +211,7 @@ def main():
     )
 
     xrfm_metrics = evaluate_model(xrfm_model, X_test_np, y_test_np)
+    xrfm_metrics["training_time_seconds"] = xrfm_training_time
 
     agop_summary = extract_highest_agop_summary(
         model=xrfm_model,
@@ -281,16 +228,29 @@ def main():
         **best_xgb_params,
     )
 
-    xgb_model.fit(X_train_df, y_train_s)
+    xgb_model, xgb_training_time = fit_with_time(
+        xgb_model,
+        X_train_df,
+        y_train_s,
+    )
+
     xgb_metrics = evaluate_model(xgb_model, X_test_df, y_test_s)
+    xgb_metrics["training_time_seconds"] = xgb_training_time
 
     rf_model = RandomForestRegressor(
         random_state=SEED,
         n_jobs=N_THREADS,
         **best_rf_params,
     )
-    rf_model.fit(X_train_df, y_train_s)
+
+    rf_model, rf_training_time = fit_with_time(
+        rf_model,
+        X_train_df,
+        y_train_s,
+    )
+
     rf_metrics = evaluate_model(rf_model, X_test_df, y_test_s)
+    rf_metrics["training_time_seconds"] = rf_training_time
 
     results = {
         "xrfm": {
@@ -304,7 +264,7 @@ def main():
         "random_forest": {
             "params": best_rf_params,
             "test_metrics": rf_metrics,
-        }
+        },
     }
 
     with open(output_dir / "test_metrics.json", "w") as f:
@@ -314,15 +274,14 @@ def main():
         xrfm_metrics=xrfm_metrics,
         xgb_metrics=xgb_metrics,
         rf_metrics=rf_metrics,
-        agop_summary=agop_summary,
         output_dir=output_dir,
     )
-
     print("\nTest metrics:")
     print(json.dumps(results, indent=2))
 
     print("\nSaved combined metrics to:", metrics_csv_path)
     print(metrics_df)
+
 
 if __name__ == "__main__":
     main()

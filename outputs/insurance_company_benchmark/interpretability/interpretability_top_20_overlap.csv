@@ -1,0 +1,7 @@
+method_a,method_b,top_k,overlap_count,jaccard_similarity,overlapping_features
+agop,pca_pc1,20,4,0.1111111111111111,"pct_households_without_children, pct_other_relationship, pct_social_class_b2, pct_social_class_c"
+agop,mutual_information,20,5,0.14285714285714285,"contribution_car_policies, contribution_fire_policies, contribution_motorcycle_scooter_policies, customer_subtype, num_car_policies"
+agop,permutation_importance,20,10,0.3333333333333333,"contribution_car_policies, contribution_fire_policies, contribution_moped_policies, contribution_private_third_party_insurance, num_car_policies, num_fire_policies, pct_other_relationship, pct_other_religion, pct_singles, purchasing_power_class"
+pca_pc1,mutual_information,20,5,0.14285714285714285,"pct_home_owners, pct_income_under_30k, pct_middle_management, pct_rented_house, pct_skilled_labourers"
+pca_pc1,permutation_importance,20,3,0.08108108108108109,"pct_income_under_30k, pct_married, pct_other_relationship"
+mutual_information,permutation_importance,20,6,0.17647058823529413,"avg_income_group, contribution_car_policies, contribution_fire_policies, num_car_policies, pct_high_status, pct_income_under_30k"

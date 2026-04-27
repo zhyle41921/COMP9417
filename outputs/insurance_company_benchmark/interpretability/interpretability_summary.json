@@ -1,0 +1,20 @@
+{
+  "files_created": [
+    "xrfm_agop_diagonal_by_leaf.csv",
+    "xrfm_agop_leaf_matrix_scores.csv",
+    "xrfm_agop_diagonal_summary.csv",
+    "agop_pca_loadings.csv",
+    "agop_pca_explained_variance.csv",
+    "agop_pca_pc1_feature_ranking.csv",
+    "mutual_information_scores.csv",
+    "permutation_importance_scores.csv",
+    "interpretability_feature_comparison.csv",
+    "interpretability_rank_spearman_correlation.csv",
+    "interpretability_score_spearman_correlation.csv",
+    "interpretability_top_20_overlap.csv",
+    "interpretability_top_20_combined_features.csv"
+  ],
+  "top_k": 20,
+  "n_features": 85,
+  "n_agop_leaves": 32
+}

@@ -11,11 +11,12 @@ os.environ["VECLIB_MAXIMUM_THREADS"] = str(N_THREADS)
 
 import sys
 import json
+import time
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error
 from xrfm import xRFM
 from xgboost import XGBRegressor
 from sklearn.ensemble import RandomForestRegressor
@@ -24,6 +25,11 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
 from experiments.bike_sharing.load_data import load_bike_splits
+from src.utils.plotting import plot_rmse_vs_n, plot_training_time_vs_n
+
+
+SUBSAMPLE_SIZES = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000]
+
 
 def load_best_params():
     output_dir = ROOT / "outputs" / "bike_sharing"
@@ -39,111 +45,141 @@ def load_best_params():
 
     return xrfm_result["params"], xgb_result["params"], rf_result["params"]
 
+
+def fit_with_time(model, *fit_args, **fit_kwargs):
+    start = time.perf_counter()
+    model.fit(*fit_args, **fit_kwargs)
+    training_time = time.perf_counter() - start
+    return model, float(training_time)
+
+
 def evaluate_model(model, X, y):
+    start = time.perf_counter()
     y_pred = model.predict(X)
+    inference_time = time.perf_counter() - start
+
     mse = mean_squared_error(y, y_pred)
 
     return {
-        "mse": float(mse),
         "rmse": float(np.sqrt(mse)),
-        "mae": float(mean_absolute_error(y, y_pred)),
-        "r2": float(r2_score(y, y_pred)),
-    }
-
-def to_numpy_agop(agop):
-    if hasattr(agop, "detach"):
-        agop = agop.detach().cpu().numpy()
-    else:
-        agop = np.asarray(agop)
-
-    if agop.ndim == 1:
-        agop = np.diag(agop)
-
-    return agop
-
-def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
-    agops = model.collect_best_agops()
-
-    best_agop = None
-    best_score = -np.inf
-    best_index = None
-
-    for i, agop in enumerate(agops):
-        agop = to_numpy_agop(agop)
-        eigenvalues = np.linalg.eigvalsh(agop)
-        score = float(np.max(eigenvalues))
-
-        if score > best_score:
-            best_score = score
-            best_agop = agop
-            best_index = i
-
-    if best_agop is None:
-        raise ValueError("No AGOP matrices found.")
-
-    agop_df = pd.DataFrame(best_agop, index=feature_names, columns=feature_names)
-    agop_path = output_dir / "xrfm_best_agop.csv"
-    agop_df.to_csv(agop_path)
-
-    diag = np.diag(best_agop)
-    diag_df = pd.DataFrame({
-        "feature": feature_names,
-        "agop_diagonal": diag,
-        "abs_agop_diagonal": np.abs(diag),
-    }).sort_values("abs_agop_diagonal", ascending=False)
-
-    eigenvalues, eigenvectors = np.linalg.eigh(best_agop)
-    top_idx = int(np.argmax(eigenvalues))
-    top_eigenvalue = float(eigenvalues[top_idx])
-    top_eigenvector = eigenvectors[:, top_idx]
-
-    eigen_df = pd.DataFrame({
-        "feature": feature_names,
-        "top_eigenvector_loading": top_eigenvector,
-        "abs_loading": np.abs(top_eigenvector),
-    }).sort_values("abs_loading", ascending=False)
-
-    diag_path = output_dir / "xrfm_highest_agop_diagonal.csv"
-    eigen_path = output_dir / "xrfm_highest_agop_top_eigenvector_loadings.csv"
-    diag_df.to_csv(diag_path, index=False)
-    eigen_df.to_csv(eigen_path, index=False)
-
-    return {
-        "top_diag_df": diag_df.head(top_k),
-        "top_eigen_df": eigen_df.head(top_k),
-        "top_eigenvalue": top_eigenvalue,
-        "best_agop_index": best_index,
+        "inference_time_per_sample_seconds": float(inference_time / len(y)),
     }
 
 
-def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, output_dir):
+def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, subsample_metrics, output_dir):
     metrics_df = pd.DataFrame([
-        {
-            "model": "xrfm",
-            "mse": xrfm_metrics["mse"],
-            "rmse": xrfm_metrics["rmse"],
-            "mae": xrfm_metrics["mae"],
-            "r2": xrfm_metrics["r2"],
-        },
-        {
-            "model": "xgboost",
-            "mse": xgb_metrics["mse"],
-            "rmse": xgb_metrics["rmse"],
-            "mae": xgb_metrics["mae"],
-            "r2": xgb_metrics["r2"],
-        },
-        {
-            "model": "random_forest",
-            "mse": rf_metrics["mse"],
-            "rmse": rf_metrics["rmse"],
-            "mae": rf_metrics["mae"],
-            "r2": rf_metrics["r2"],
-        },
+        xrfm_metrics,
+        xgb_metrics,
+        rf_metrics,
     ])
+
+    if len(subsample_metrics) > 0:
+        metrics_df = pd.concat([metrics_df, pd.DataFrame(subsample_metrics)], ignore_index=True)
 
     metrics_csv_path = output_dir / "metrics.csv"
     metrics_df.to_csv(metrics_csv_path, index=False)
+
     return metrics_df, metrics_csv_path
+
+
+def run_subsample_experiments(
+    X_train_df,
+    X_val_df,
+    X_test_df,
+    y_train_s,
+    y_val_s,
+    y_test_s,
+    best_xrfm_params,
+    best_xgb_params,
+    best_rf_params,
+):
+    rng = np.random.default_rng(SEED)
+    rows = []
+
+    full_train_size = len(X_train_df)
+
+    X_val_np = np.asarray(X_val_df, dtype=np.float32)
+    X_test_np = np.asarray(X_test_df, dtype=np.float32)
+
+    y_val_np = np.asarray(y_val_s, dtype=np.float32)
+    y_test_np = np.asarray(y_test_s, dtype=np.float32)
+
+    for n in SUBSAMPLE_SIZES:
+        print(f"\nRunning subsample size n={n}")
+
+        sample_idx = rng.choice(full_train_size, size=n, replace=False)
+
+        X_sub_df = X_train_df.iloc[sample_idx]
+        y_sub_s = y_train_s.iloc[sample_idx]
+
+        X_sub_np = np.asarray(X_sub_df, dtype=np.float32)
+        y_sub_np = np.asarray(y_sub_s, dtype=np.float32)
+
+        # xRFM
+        xrfm_model = xRFM(
+            **best_xrfm_params,
+            n_threads=N_THREADS,
+            random_state=SEED,
+        )
+
+        xrfm_model, t = fit_with_time(
+            xrfm_model,
+            X_sub_np,
+            y_sub_np,
+            X_val=X_val_np,
+            y_val=y_val_np,
+        )
+
+        m = evaluate_model(xrfm_model, X_test_np, y_test_np)
+
+        rows.append({
+            "train_size": n,
+            "model": "xrfm",
+            "rmse": m["rmse"],
+            "training_time_seconds": t,
+            "inference_time_per_sample_seconds": m["inference_time_per_sample_seconds"],
+        })
+
+        # XGB
+        xgb_model = XGBRegressor(
+            objective="reg:squarederror",
+            eval_metric="rmse",
+            random_state=SEED,
+            n_jobs=N_THREADS,
+            **best_xgb_params,
+        )
+
+        xgb_model, t = fit_with_time(xgb_model, X_sub_df, y_sub_s)
+        m = evaluate_model(xgb_model, X_test_df, y_test_s)
+
+        rows.append({
+            "train_size": n,
+            "model": "xgboost",
+            "rmse": m["rmse"],
+            "training_time_seconds": t,
+            "inference_time_per_sample_seconds": m["inference_time_per_sample_seconds"],
+        })
+
+        # RF
+        rf_model = RandomForestRegressor(
+            random_state=SEED,
+            n_jobs=N_THREADS,
+            **best_rf_params,
+        )
+
+        rf_model, t = fit_with_time(rf_model, X_sub_df, y_sub_s)
+        m = evaluate_model(rf_model, X_test_df, y_test_s)
+
+        rows.append({
+            "train_size": n,
+            "model": "random_forest",
+            "rmse": m["rmse"],
+            "training_time_seconds": t,
+            "inference_time_per_sample_seconds": m["inference_time_per_sample_seconds"],
+        })
+
+    return rows
+
 
 def main():
     output_dir = ROOT / "outputs" / "bike_sharing"
@@ -153,10 +189,6 @@ def main():
 
     best_xrfm_params, best_xgb_params, best_rf_params = load_best_params()
 
-    print("Best xRFM params:", best_xrfm_params)
-    print("Best XGB params:", best_xgb_params)
-    print("Best RF params:", best_rf_params)
-
     X_train_np = np.asarray(X_train_df, dtype=np.float32)
     X_val_np = np.asarray(X_val_df, dtype=np.float32)
     X_test_np = np.asarray(X_test_df, dtype=np.float32)
@@ -165,70 +197,71 @@ def main():
     y_val_np = np.asarray(y_val_s, dtype=np.float32)
     y_test_np = np.asarray(y_test_s, dtype=np.float32)
 
-    xrfm_model = xRFM(
-        **best_xrfm_params,
-        n_threads=N_THREADS,
-        random_state=SEED,
-    )
-    xrfm_model.fit(X_train_np, y_train_np, X_val=X_val_np, y_val=y_val_np)
-    xrfm_metrics = evaluate_model(xrfm_model, X_test_np, y_test_np)
+    # ===== FULL TRAIN =====
+    xrfm_model = xRFM(**best_xrfm_params, n_threads=N_THREADS, random_state=SEED)
+    xrfm_model, t = fit_with_time(xrfm_model, X_train_np, y_train_np, X_val=X_val_np, y_val=y_val_np)
+    m = evaluate_model(xrfm_model, X_test_np, y_test_np)
 
-    agop_summary = extract_highest_agop_summary(
-        model=xrfm_model,
-        feature_names=list(X_train_df.columns),
-        output_dir=output_dir,
-        top_k=20,
-    )
-
-    xgb_model = XGBRegressor(
-        objective="reg:squarederror",
-        eval_metric="rmse",
-        random_state=SEED,
-        n_jobs=N_THREADS,
-        **best_xgb_params,
-    )
-    xgb_model.fit(X_train_df, y_train_s)
-    xgb_metrics = evaluate_model(xgb_model, X_test_df, y_test_s)
-
-    rf_model = RandomForestRegressor(
-        random_state=SEED,
-        n_jobs=N_THREADS,
-        **best_rf_params,
-    )
-    rf_model.fit(X_train_df, y_train_s)
-    rf_metrics = evaluate_model(rf_model, X_test_df, y_test_s)
-
-    results = {
-        "xrfm": {
-            "params": best_xrfm_params,
-            "test_metrics": xrfm_metrics,
-            "agop_top_eigenvalue": agop_summary["top_eigenvalue"],
-            "agop_index": agop_summary["best_agop_index"],
-        },
-        "xgboost": {
-            "params": best_xgb_params,
-            "test_metrics": xgb_metrics,
-        },
-        "random_forest": {
-            "params": best_rf_params,
-            "test_metrics": rf_metrics,
-        },
+    xrfm_metrics = {
+        "train_size": len(X_train_df),
+        "model": "xrfm",
+        "rmse": m["rmse"],
+        "training_time_seconds": t,
+        "inference_time_per_sample_seconds": m["inference_time_per_sample_seconds"],
     }
 
-    with open(output_dir / "test_metrics.json", "w") as f:
-        json.dump(results, f, indent=2)
+    xgb_model = XGBRegressor(**best_xgb_params, random_state=SEED, n_jobs=N_THREADS)
+    xgb_model, t = fit_with_time(xgb_model, X_train_df, y_train_s)
+    m = evaluate_model(xgb_model, X_test_df, y_test_s)
 
-    metrics_df, metrics_csv_path = make_metrics_csv(
-        xrfm_metrics=xrfm_metrics,
-        xgb_metrics=xgb_metrics,
-        rf_metrics=rf_metrics,
-        output_dir=output_dir,
+    xgb_metrics = {
+        "train_size": len(X_train_df),
+        "model": "xgboost",
+        "rmse": m["rmse"],
+        "training_time_seconds": t,
+        "inference_time_per_sample_seconds": m["inference_time_per_sample_seconds"],
+    }
+
+    rf_model = RandomForestRegressor(**best_rf_params, random_state=SEED, n_jobs=N_THREADS)
+    rf_model, t = fit_with_time(rf_model, X_train_df, y_train_s)
+    m = evaluate_model(rf_model, X_test_df, y_test_s)
+
+    rf_metrics = {
+        "train_size": len(X_train_df),
+        "model": "random_forest",
+        "rmse": m["rmse"],
+        "training_time_seconds": t,
+        "inference_time_per_sample_seconds": m["inference_time_per_sample_seconds"],
+    }
+
+    # ===== SUBSAMPLING =====
+    subsample_metrics = run_subsample_experiments(
+        X_train_df,
+        X_val_df,
+        X_test_df,
+        y_train_s,
+        y_val_s,
+        y_test_s,
+        best_xrfm_params,
+        best_xgb_params,
+        best_rf_params,
     )
 
-    print("\nTest metrics:")
-    print(json.dumps(results, indent=2))
+    metrics_df, metrics_csv_path = make_metrics_csv(
+        xrfm_metrics,
+        xgb_metrics,
+        rf_metrics,
+        subsample_metrics,
+        output_dir,
+    )
+
     print("\nSaved metrics to:", metrics_csv_path)
     print(metrics_df)
+
+    # ===== PLOTTING =====
+    plot_rmse_vs_n(metrics_df, output_dir)
+    plot_training_time_vs_n(metrics_df, output_dir)
+
 
 if __name__ == "__main__":
     main()

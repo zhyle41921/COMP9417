@@ -11,7 +11,7 @@ sys.path.append(str(ROOT))
 from src.utils.preprocessing import preprocess_data
 
 def load_bike_sharing_data():
-    data_path = ROOT / "experiments" / "bike_sharing" / "hour.csv"
+    data_path = ROOT / "experiments" / "bike_sharing" / "data" / "hour.csv"
 
     df = pd.read_csv(
         data_path,
