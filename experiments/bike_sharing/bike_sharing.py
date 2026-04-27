@@ -24,7 +24,6 @@ sys.path.append(str(ROOT))
 
 from experiments.bike_sharing.load_data import load_bike_splits
 
-
 def load_best_params():
     output_dir = ROOT / "outputs" / "bike_sharing"
 
@@ -35,7 +34,6 @@ def load_best_params():
         xgb_result = json.load(f)
 
     return xrfm_result["params"], xgb_result["params"]
-
 
 def evaluate_model(model, X, y):
     y_pred = model.predict(X)
@@ -48,7 +46,6 @@ def evaluate_model(model, X, y):
         "r2": float(r2_score(y, y_pred)),
     }
 
-
 def to_numpy_agop(agop):
     if hasattr(agop, "detach"):
         agop = agop.detach().cpu().numpy()
@@ -59,7 +56,6 @@ def to_numpy_agop(agop):
         agop = np.diag(agop)
 
     return agop
-
 
 def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
     agops = model.collect_best_agops()
@@ -115,7 +111,6 @@ def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
         "best_agop_index": best_index,
     }
 
-
 def make_metrics_csv(xrfm_metrics, xgb_metrics, output_dir):
     metrics_df = pd.DataFrame([
         {
@@ -137,7 +132,6 @@ def make_metrics_csv(xrfm_metrics, xgb_metrics, output_dir):
     metrics_csv_path = output_dir / "metrics.csv"
     metrics_df.to_csv(metrics_csv_path, index=False)
     return metrics_df, metrics_csv_path
-
 
 def main():
     output_dir = ROOT / "outputs" / "bike_sharing"
@@ -206,7 +200,6 @@ def main():
     print(json.dumps(results, indent=2))
     print("\nSaved metrics to:", metrics_csv_path)
     print(metrics_df)
-
 
 if __name__ == "__main__":
     main()

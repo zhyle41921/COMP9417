@@ -67,7 +67,7 @@ def tune_rf(
 
     if n_estimators_values is None:
         n_estimators_values = [50, 100, 200, 500]
-    
+
     if max_depth_values is None:
         max_depth_values = [None, 5, 10, 20, 30]
 
@@ -100,7 +100,7 @@ def tune_rf(
             print(metrics)
         except Exception as e:
             print(f"Failed: {e}")
-    
+
     best = pick_best(stage_results)
     best_params = best["params"]
     results_all.extend(stage_results)
@@ -158,7 +158,7 @@ def tune_rf(
     best = pick_best(stage_results)
     best_params = best["params"]
     results_all.extend(stage_results)
-    
+
     final_best = clean_best_result(pick_best(results_all))
     print(f"\nFinal best params: {final_best['params']}")
 

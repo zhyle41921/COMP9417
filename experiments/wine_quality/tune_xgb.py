@@ -22,10 +22,8 @@ sys.path.append(str(ROOT))
 from src.tuning.xgb_tuner_reg import tune_xgb_regression
 from experiments.wine_quality.load_data import load_wine_splits
 
-
 random.seed(SEED)
 np.random.seed(SEED)
-
 
 def main():
     output_dir = ROOT / "outputs" / "wine_quality"
@@ -53,7 +51,6 @@ def main():
 
     print("\nBest XGB regression result:")
     print(json.dumps(best_result, indent=2))
-
 
 if __name__ == "__main__":
     main()

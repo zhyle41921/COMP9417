@@ -6,9 +6,7 @@ import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from xrfm import xRFM
 
-
 SEED = 42
-
 
 def evaluate_regression_model(model, X, y):
     y_pred = model.predict(X)
@@ -22,7 +20,6 @@ def evaluate_regression_model(model, X, y):
         "r2": float(r2_score(y, y_pred)),
     }
 
-
 def pick_best_regression(results):
     if not results:
         raise ValueError("No successful xRFM regression tuning results.")
@@ -31,7 +28,6 @@ def pick_best_regression(results):
         results,
         key=lambda r: r["val_metrics"]["rmse"]
     )
-
 
 def tune_xrfm_regression(
     X_train,

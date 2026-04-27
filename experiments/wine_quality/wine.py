@@ -36,7 +36,6 @@ def load_best_params():
 
     return xrfm_result["params"], xgb_result["params"]
 
-
 def evaluate_model(model, X, y):
     y_pred = model.predict(X)
     mse = mean_squared_error(y, y_pred)
@@ -48,7 +47,6 @@ def evaluate_model(model, X, y):
         "r2": float(r2_score(y, y_pred)),
     }
 
-
 def to_numpy_agop(agop):
     if hasattr(agop, "detach"):
         agop = agop.detach().cpu().numpy()
@@ -59,7 +57,6 @@ def to_numpy_agop(agop):
         agop = np.diag(agop)
 
     return agop
-
 
 def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
     agops = model.collect_best_agops()
@@ -134,7 +131,6 @@ def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
         "diag_path": diag_path,
         "eigen_path": eigen_path,
     }
-
 
 def make_metrics_csv(xrfm_metrics, xgb_metrics, agop_summary, output_dir):
     model_metrics_df = pd.DataFrame([
@@ -220,7 +216,6 @@ def make_metrics_csv(xrfm_metrics, xgb_metrics, agop_summary, output_dir):
 
     return metrics_df, metrics_csv_path
 
-
 def main():
     output_dir = ROOT / "outputs" / "wine_quality"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -296,7 +291,6 @@ def main():
 
     print("\nSaved combined metrics to:", metrics_csv_path)
     print(metrics_df)
-
 
 if __name__ == "__main__":
     main()

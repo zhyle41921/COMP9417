@@ -20,10 +20,8 @@ sys.path.append(str(ROOT))
 from src.tuning.xrfm_tuner import tune_xrfm
 from experiments.ad.load_data import load_ad_splits
 
-
 random.seed(SEED)
 np.random.seed(SEED)
-
 
 def to_numpy(X_train, X_val, X_test, y_train, y_val, y_test):
     return (
@@ -34,7 +32,6 @@ def to_numpy(X_train, X_val, X_test, y_train, y_val, y_test):
         np.asarray(y_val, dtype=np.int64),
         np.asarray(y_test, dtype=np.int64),
     )
-
 
 def main():
     output_dir = ROOT / "outputs" / "ad"
@@ -68,7 +65,6 @@ def main():
 
     print("\nBest result:")
     print(json.dumps(best_result, indent=2))
-
 
 if __name__ == "__main__":
     main()

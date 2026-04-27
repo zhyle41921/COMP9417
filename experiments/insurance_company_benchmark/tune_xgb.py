@@ -21,10 +21,8 @@ sys.path.append(str(ROOT))
 from src.tuning.xgb_tuner import tune_xgb
 from experiments.insurance_company_benchmark.load_data import load_insurance_splits
 
-
 random.seed(SEED)
 np.random.seed(SEED)
-
 
 def main():
     output_dir = ROOT / "outputs" / "insurance_company_benchmark"
@@ -52,7 +50,6 @@ def main():
 
     print("\nBest XGB result:")
     print(json.dumps(best_result, indent=2))
-
 
 if __name__ == "__main__":
     main()

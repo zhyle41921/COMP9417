@@ -6,9 +6,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score, roc_auc_score
 from xgboost import XGBClassifier
 
-
 SEED = 42
-
 
 def evaluate_xgb(model, X, y):
     y_pred = model.predict(X)
@@ -32,7 +30,6 @@ def evaluate_xgb(model, X, y):
 
     return metrics
 
-
 def pick_best(results):
     if not results:
         raise ValueError("No successful tuning results to choose from.")
@@ -45,13 +42,11 @@ def pick_best(results):
         )
     )
 
-
 def clean_best_result(result):
     return {
         "params": result["params"],
         "val_metrics": result["val_metrics"],
     }
-
 
 def tune_xgb(
     X_train,

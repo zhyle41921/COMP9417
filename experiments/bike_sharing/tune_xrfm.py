@@ -21,10 +21,8 @@ sys.path.append(str(ROOT))
 from src.tuning.xrfm_tuner_reg import tune_xrfm_regression
 from experiments.bike_sharing.load_data import load_bike_splits
 
-
 random.seed(SEED)
 np.random.seed(SEED)
-
 
 def to_numpy(X_train, X_val, X_test, y_train, y_val, y_test):
     return (
@@ -35,7 +33,6 @@ def to_numpy(X_train, X_val, X_test, y_train, y_val, y_test):
         np.asarray(y_val, dtype=np.float32),
         np.asarray(y_test, dtype=np.float32),
     )
-
 
 def main():
     output_dir = ROOT / "outputs" / "bike_sharing"
@@ -73,7 +70,6 @@ def main():
 
     print("\nBest result:")
     print(json.dumps(best_result, indent=2))
-
 
 if __name__ == "__main__":
     main()

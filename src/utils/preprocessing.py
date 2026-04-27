@@ -4,16 +4,13 @@ from sklearn.preprocessing import StandardScaler
 
 RANDOM_STATE = 42
 
-
 def remove_duplicates(df):
     return df.drop_duplicates().copy()
-
 
 def split_features_target(df, target_col):
     X = df.drop(columns=[target_col]).copy()
     y = df[target_col].copy()
     return X, y
-
 
 def split_data(X, y, val_size=0.2, test_size=0.2, random_state=RANDOM_STATE, stratify=True):
     stratify_labels = y if stratify else None
@@ -39,11 +36,9 @@ def split_data(X, y, val_size=0.2, test_size=0.2, random_state=RANDOM_STATE, str
 
     return X_train, X_val, X_test, y_train, y_val, y_test
 
-
 def drop_na_before_split(X, y):
     mask = X.notna().all(axis=1)
     return X.loc[mask].copy(), y.loc[mask].copy()
-
 
 def impute_missing_values(X):
     X = X.copy()
@@ -61,7 +56,6 @@ def impute_missing_values(X):
 
     return X
 
-
 def scale_numeric_features(X):
     X = X.copy()
 
@@ -74,7 +68,6 @@ def scale_numeric_features(X):
     X[numeric_cols] = scaler.fit_transform(X[numeric_cols])
 
     return X
-
 
 def encode_categorical(X, drop_first=False):
     X = X.copy()
@@ -92,7 +85,6 @@ def encode_categorical(X, drop_first=False):
     )
 
     return X
-
 
 def preprocess_data(
     df,

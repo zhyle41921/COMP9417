@@ -21,7 +21,6 @@ sys.path.append(str(ROOT))
 
 from experiments.ad.load_data import load_ad_splits
 
-
 def load_best_params():
     output_dir = ROOT / "outputs" / "ad"
 
@@ -36,7 +35,6 @@ def load_best_params():
 
     return xrfm_result["params"], xgb_result["params"], rf_result["params"]
 
-
 def to_numpy(X_train, X_val, X_test, y_train, y_val, y_test):
     return (
         np.asarray(X_train, dtype=np.float32),
@@ -46,7 +44,6 @@ def to_numpy(X_train, X_val, X_test, y_train, y_val, y_test):
         np.asarray(y_val, dtype=np.int64),
         np.asarray(y_test, dtype=np.int64),
     )
-
 
 def evaluate_model(model, X, y):
     y_pred = model.predict(X)
@@ -66,7 +63,6 @@ def evaluate_model(model, X, y):
         metrics["roc_auc"] = float(roc_auc_score(y, y_score))
 
     return metrics
-
 
 def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, output_dir):
     metrics_df = pd.DataFrame([
@@ -91,7 +87,6 @@ def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, output_dir):
     metrics_df.to_csv(metrics_csv_path, index=False)
 
     return metrics_df, metrics_csv_path
-
 
 def main():
     output_dir = ROOT / "outputs" / "ad"
@@ -173,7 +168,6 @@ def main():
     print(json.dumps(results, indent=2))
     print("\nSaved metrics to:", metrics_csv_path)
     print(metrics_df)
-
 
 if __name__ == "__main__":
     main()

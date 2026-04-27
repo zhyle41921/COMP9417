@@ -9,3 +9,5 @@ jupyter
 ipywidgets
 tqdm
 tabpfn
+matplotlib
+seaborn

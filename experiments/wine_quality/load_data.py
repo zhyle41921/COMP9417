@@ -10,7 +10,6 @@ sys.path.append(str(ROOT))
 
 from src.utils.preprocessing import preprocess_data
 
-
 def load_wine_data():
     data_dir = ROOT / "experiments" / "wine_quality" / "data"
 
@@ -25,7 +24,6 @@ def load_wine_data():
     df["quality"] = pd.to_numeric(df["quality"], errors="raise")
 
     return df
-
 
 def save_wine_splits(seed=SEED):
     output_dir = ROOT / "experiments" / "wine_quality" / "data"
@@ -53,7 +51,6 @@ def save_wine_splits(seed=SEED):
     print("X_val:", X_val.shape)
     print("X_test:", X_test.shape)
 
-
 def load_wine_splits():
     split_dir = ROOT / "experiments" / "wine_quality" / "data"
 
@@ -67,10 +64,8 @@ def load_wine_splits():
 
     return X_train, X_val, X_test, y_train, y_val, y_test
 
-
 def main():
     save_wine_splits(seed=SEED)
-
 
 if __name__ == "__main__":
     main()

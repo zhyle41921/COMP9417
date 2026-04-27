@@ -21,10 +21,8 @@ sys.path.append(str(ROOT))
 from src.tuning.xgb_tuner_reg import tune_xgb_regression
 from experiments.bike_sharing.load_data import load_bike_splits
 
-
 random.seed(SEED)
 np.random.seed(SEED)
-
 
 def main():
     output_dir = ROOT / "outputs" / "bike_sharing"
@@ -52,7 +50,6 @@ def main():
 
     print("\nBest XGB regression result:")
     print(json.dumps(best_result, indent=2))
-
 
 if __name__ == "__main__":
     main()

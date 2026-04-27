@@ -10,7 +10,6 @@ sys.path.append(str(ROOT))
 
 from src.utils.preprocessing import preprocess_data
 
-
 def load_bike_sharing_data():
     data_path = ROOT / "experiments" / "bike_sharing" / "hour.csv"
 
@@ -26,7 +25,6 @@ def load_bike_sharing_data():
     df = df.drop(columns=["instant", "dteday", "casual", "registered"])
 
     return df
-
 
 def save_bike_splits(seed=SEED):
     output_dir = ROOT / "experiments" / "bike_sharing" / "data"
@@ -55,7 +53,6 @@ def save_bike_splits(seed=SEED):
     print("X_val:", X_val.shape)
     print("X_test:", X_test.shape)
 
-
 def load_bike_splits():
     split_dir = ROOT / "experiments" / "bike_sharing" / "data"
     required_files = [
@@ -81,10 +78,8 @@ def load_bike_splits():
 
     return X_train, X_val, X_test, y_train, y_val, y_test
 
-
 def main():
     save_bike_splits(seed=SEED)
-
 
 if __name__ == "__main__":
     main()

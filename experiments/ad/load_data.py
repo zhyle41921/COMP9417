@@ -10,7 +10,6 @@ sys.path.append(str(ROOT))
 
 from src.utils.preprocessing import preprocess_data
 
-
 def load_ad_data():
     n_features = 1558
     col_names = [f"x{i}" for i in range(n_features)] + ["label"]
@@ -33,7 +32,6 @@ def load_ad_data():
         raise ValueError("Found unmapped labels in ad dataset.")
 
     return df
-
 
 def save_ad_splits(seed=SEED):
     output_dir = ROOT / "experiments" / "ad" / "data"
@@ -63,7 +61,6 @@ def save_ad_splits(seed=SEED):
     print("X_val:", X_val.shape)
     print("X_test:", X_test.shape)
 
-
 def load_ad_splits():
     split_dir = ROOT / "experiments" / "ad" / "data"
 
@@ -77,10 +74,8 @@ def load_ad_splits():
 
     return X_train, X_val, X_test, y_train, y_val, y_test
 
-
 def main():
     save_ad_splits(seed=SEED)
-
 
 if __name__ == "__main__":
     main()

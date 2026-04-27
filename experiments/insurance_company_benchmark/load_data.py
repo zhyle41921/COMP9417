@@ -10,7 +10,6 @@ sys.path.append(str(ROOT))
 
 from src.utils.preprocessing import preprocess_data
 
-
 def load_insurance_data():
     data_path = (
         ROOT
@@ -34,7 +33,6 @@ def load_insurance_data():
 
     df["CARAVAN"] = pd.to_numeric(df["CARAVAN"], errors="raise").astype(int)
     return df
-
 
 def save_insurance_splits(seed=SEED):
     output_dir = ROOT / "experiments" / "insurance_company_benchmark" / "data"
@@ -66,7 +64,6 @@ def save_insurance_splits(seed=SEED):
     print("X_val:", X_val.shape)
     print("X_test:", X_test.shape)
 
-
 def load_insurance_splits():
     split_dir = ROOT / "experiments" / "insurance_company_benchmark" / "data"
     required_files = [
@@ -92,10 +89,8 @@ def load_insurance_splits():
 
     return X_train, X_val, X_test, y_train, y_val, y_test
 
-
 def main():
     save_insurance_splits(seed=SEED)
-
 
 if __name__ == "__main__":
     main()
