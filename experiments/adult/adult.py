@@ -1,5 +1,5 @@
 SEED = 42
-N_THREADS = 1
+N_THREADS = 4
 
 import os
 
