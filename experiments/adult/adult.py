@@ -50,7 +50,10 @@ def load_best_params():
     with open(output_dir / "xgb_best_params.json", "r") as f:
         xgb_result = json.load(f)
 
-    return xrfm_result["params"], xgb_result["params"]
+    with open(output_dir / "rf_best_params.json", "r") as f:
+        rf_result = json.load(f)
+
+    return xrfm_result["params"], xgb_result["params"], rf_result["params"]
 
 def evaluate_model(model, X, y):
     y_pred = model.predict(X)
@@ -165,7 +168,8 @@ def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
         "eigen_path": eigen_path,
     }
 
-def make_metrics_csv(xrfm_metrics, xgb_metrics, agop_summary, output_dir):
+
+def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, agop_summary, output_dir):
     model_metrics_df = pd.DataFrame([
         {
             "row_type": "model_metric",
@@ -185,6 +189,19 @@ def make_metrics_csv(xrfm_metrics, xgb_metrics, agop_summary, output_dir):
             "model": "xgboost",
             "accuracy": xgb_metrics["accuracy"],
             "roc_auc": xgb_metrics.get("roc_auc", ""),
+            "agop_summary_type": "",
+            "rank": "",
+            "feature": "",
+            "value": "",
+            "abs_value": "",
+            "top_eigenvalue": "",
+            "selected_agop_index": "",
+        },
+        {
+            "row_type": "model_metric",
+            "model": "random_forest",
+            "accuracy": rf_metrics["accuracy"],
+            "roc_auc": rf_metrics.get("roc_auc", ""),
             "agop_summary_type": "",
             "rank": "",
             "feature": "",
@@ -252,10 +269,11 @@ def main():
     print("X_val:", X_val_df.shape)
     print("X_test:", X_test_df.shape)
 
-    best_xrfm_params, best_xgb_params = load_best_params()
+    best_xrfm_params, best_xgb_params, best_rf_params = load_best_params()
 
     print("Best xRFM params:", best_xrfm_params)
     print("Best XGB params:", best_xgb_params)
+    print("Best RF params:", best_rf_params)
 
     X_train_np = np.asarray(X_train_df, dtype=np.float32)
     X_val_np = np.asarray(X_val_df, dtype=np.float32)
@@ -298,6 +316,15 @@ def main():
     xgb_model.fit(X_train_df, y_train_s)
     xgb_metrics = evaluate_model(xgb_model, X_test_df, y_test_s)
 
+    from sklearn.ensemble import RandomForestClassifier
+    rf_model = RandomForestClassifier(
+        random_state=SEED,
+        n_jobs=N_THREADS,
+        **best_rf_params,
+    )
+    rf_model.fit(X_train_df, y_train_s)
+    rf_metrics = evaluate_model(rf_model, X_test_df, y_test_s)
+
     results = {
         "xrfm": {
             "params": best_xrfm_params,
@@ -306,6 +333,10 @@ def main():
         "xgboost": {
             "params": best_xgb_params,
             "test_metrics": xgb_metrics,
+        },
+        "random_forest": {
+            "params": best_rf_params,
+            "test_metrics": rf_metrics,
         }
     }
 
@@ -315,6 +346,7 @@ def main():
     metrics_df, metrics_csv_path = make_metrics_csv(
         xrfm_metrics=xrfm_metrics,
         xgb_metrics=xgb_metrics,
+        rf_metrics=rf_metrics,
         agop_summary=agop_summary,
         output_dir=output_dir,
     )
