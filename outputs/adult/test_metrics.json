@@ -5,8 +5,8 @@
       "max_leaf_size": 2048
     },
     "test_metrics": {
-      "accuracy": 0.8430686075793871,
-      "roc_auc": 0.8936386944822385
+      "accuracy": 0.8472452552054542,
+      "roc_auc": 0.8959931843192506
     }
   },
   "xgboost": {
