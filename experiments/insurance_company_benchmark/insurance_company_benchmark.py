@@ -18,6 +18,7 @@ import pandas as pd
 from sklearn.metrics import accuracy_score, roc_auc_score
 from xrfm import xRFM
 from xgboost import XGBClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
@@ -33,7 +34,10 @@ def load_best_params():
     with open(output_dir / "xgb_best_params.json", "r") as f:
         xgb_result = json.load(f)
 
-    return xrfm_result["params"], xgb_result["params"]
+    with open(output_dir / "rf_best_params.json", "r") as f:
+        rf_result = json.load(f)
+
+    return xrfm_result["params"], xgb_result["params"], rf_result["params"]
 
 def evaluate_model(model, X, y):
     y_pred = model.predict(X)
@@ -119,7 +123,7 @@ def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
         "best_agop_index": best_index,
     }
 
-def make_metrics_csv(xrfm_metrics, xgb_metrics, output_dir):
+def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, output_dir):
     metrics_df = pd.DataFrame([
         {
             "model": "xrfm",
@@ -130,6 +134,11 @@ def make_metrics_csv(xrfm_metrics, xgb_metrics, output_dir):
             "model": "xgboost",
             "accuracy": xgb_metrics["accuracy"],
             "roc_auc": xgb_metrics.get("roc_auc", ""),
+        },
+        {
+            "model": "random_forest",
+            "accuracy": rf_metrics["accuracy"],
+            "roc_auc": rf_metrics.get("roc_auc", ""),
         },
     ])
 
@@ -142,7 +151,7 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     X_train_df, X_val_df, X_test_df, y_train_s, y_val_s, y_test_s = load_insurance_splits()
-    best_xrfm_params, best_xgb_params = load_best_params()
+    best_xrfm_params, best_xgb_params, best_rf_params = load_best_params()
 
     X_train_np = np.asarray(X_train_df, dtype=np.float32)
     X_val_np = np.asarray(X_val_df, dtype=np.float32)
@@ -177,6 +186,14 @@ def main():
     xgb_model.fit(X_train_df, y_train_s)
     xgb_metrics = evaluate_model(xgb_model, X_test_df, y_test_s)
 
+    rf_model = RandomForestClassifier(
+        random_state=SEED,
+        n_jobs=N_THREADS,
+        **best_rf_params,
+    )
+    rf_model.fit(X_train_df, y_train_s)
+    rf_metrics = evaluate_model(rf_model, X_test_df, y_test_s)
+
     results = {
         "xrfm": {
             "params": best_xrfm_params,
@@ -188,6 +205,10 @@ def main():
             "params": best_xgb_params,
             "test_metrics": xgb_metrics,
         },
+        "random_forest": {
+            "params": best_rf_params,
+            "test_metrics": rf_metrics,
+        },
     }
 
     with open(output_dir / "test_metrics.json", "w") as f:
@@ -196,6 +217,7 @@ def main():
     metrics_df, metrics_csv_path = make_metrics_csv(
         xrfm_metrics=xrfm_metrics,
         xgb_metrics=xgb_metrics,
+        rf_metrics=rf_metrics,
         output_dir=output_dir,
     )
 
