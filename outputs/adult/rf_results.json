@@ -1,0 +1,172 @@
+[
+  {
+    "stage": "n_estimators",
+    "params": {
+      "n_estimators": 50
+    },
+    "val_metrics": {
+      "accuracy": 0.8436972209427299,
+      "roc_auc": 0.888717280390417
+    }
+  },
+  {
+    "stage": "n_estimators",
+    "params": {
+      "n_estimators": 100
+    },
+    "val_metrics": {
+      "accuracy": 0.8470750806080147,
+      "roc_auc": 0.8917118275520521
+    }
+  },
+  {
+    "stage": "n_estimators",
+    "params": {
+      "n_estimators": 200
+    },
+    "val_metrics": {
+      "accuracy": 0.8436972209427299,
+      "roc_auc": 0.893709374548606
+    }
+  },
+  {
+    "stage": "n_estimators",
+    "params": {
+      "n_estimators": 500
+    },
+    "val_metrics": {
+      "accuracy": 0.844925533548288,
+      "roc_auc": 0.8937848218154806
+    }
+  },
+  {
+    "stage": "max_depth",
+    "params": {
+      "n_estimators": 500,
+      "max_depth": null
+    },
+    "val_metrics": {
+      "accuracy": 0.844925533548288,
+      "roc_auc": 0.8937848218154806
+    }
+  },
+  {
+    "stage": "max_depth",
+    "params": {
+      "n_estimators": 500,
+      "max_depth": 5
+    },
+    "val_metrics": {
+      "accuracy": 0.8522954091816367,
+      "roc_auc": 0.9051860645673842
+    }
+  },
+  {
+    "stage": "max_depth",
+    "params": {
+      "n_estimators": 500,
+      "max_depth": 10
+    },
+    "val_metrics": {
+      "accuracy": 0.8641179180101336,
+      "roc_auc": 0.9162852603124161
+    }
+  },
+  {
+    "stage": "max_depth",
+    "params": {
+      "n_estimators": 500,
+      "max_depth": 20
+    },
+    "val_metrics": {
+      "accuracy": 0.860586519269154,
+      "roc_auc": 0.9147080255256803
+    }
+  },
+  {
+    "stage": "max_depth",
+    "params": {
+      "n_estimators": 500,
+      "max_depth": 30
+    },
+    "val_metrics": {
+      "accuracy": 0.8461538461538461,
+      "roc_auc": 0.8996636470563958
+    }
+  },
+  {
+    "stage": "min_samples_split",
+    "params": {
+      "n_estimators": 500,
+      "max_depth": 10,
+      "min_samples_split": 2
+    },
+    "val_metrics": {
+      "accuracy": 0.8641179180101336,
+      "roc_auc": 0.9162852603124161
+    }
+  },
+  {
+    "stage": "min_samples_split",
+    "params": {
+      "n_estimators": 500,
+      "max_depth": 10,
+      "min_samples_split": 5
+    },
+    "val_metrics": {
+      "accuracy": 0.8641179180101336,
+      "roc_auc": 0.9161513897773468
+    }
+  },
+  {
+    "stage": "min_samples_split",
+    "params": {
+      "n_estimators": 500,
+      "max_depth": 10,
+      "min_samples_split": 10
+    },
+    "val_metrics": {
+      "accuracy": 0.8659603869184708,
+      "roc_auc": 0.9165322372629537
+    }
+  },
+  {
+    "stage": "max_features",
+    "params": {
+      "n_estimators": 500,
+      "max_depth": 10,
+      "min_samples_split": 10,
+      "max_features": "sqrt"
+    },
+    "val_metrics": {
+      "accuracy": 0.8659603869184708,
+      "roc_auc": 0.9165322372629537
+    }
+  },
+  {
+    "stage": "max_features",
+    "params": {
+      "n_estimators": 500,
+      "max_depth": 10,
+      "min_samples_split": 10,
+      "max_features": "log2"
+    },
+    "val_metrics": {
+      "accuracy": 0.8613542146476278,
+      "roc_auc": 0.9144433797280288
+    }
+  },
+  {
+    "stage": "max_features",
+    "params": {
+      "n_estimators": 500,
+      "max_depth": 10,
+      "min_samples_split": 10,
+      "max_features": null
+    },
+    "val_metrics": {
+      "accuracy": 0.8650391524643022,
+      "roc_auc": 0.917738297290605
+    }
+  }
+]

@@ -23,5 +23,17 @@
       "accuracy": 0.8714452429211965,
       "roc_auc": 0.9259804754876162
     }
+  },
+  "random_forest": {
+    "params": {
+      "n_estimators": 500,
+      "max_depth": 10,
+      "min_samples_split": 10,
+      "max_features": null
+    },
+    "test_metrics": {
+      "accuracy": 0.8634604754007739,
+      "roc_auc": 0.9146136404362488
+    }
   }
 }

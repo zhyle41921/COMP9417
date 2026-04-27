@@ -1,3 +1,4 @@
 row_type,model,accuracy,roc_auc,agop_summary_type,rank,feature,value,abs_value,top_eigenvalue,selected_agop_index
 model_metric,xrfm,0.8430686075793871,0.8936386944822385,,,,,,,
 model_metric,xgboost,0.8714452429211965,0.9259804754876162,,,,,,,
+model_metric,random_forest,0.8634604754007739,0.9146136404362488,,,,,,,
