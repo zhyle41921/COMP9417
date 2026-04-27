@@ -1,0 +1,42 @@
+[
+  {
+    "params": {
+      "verbose": false,
+      "max_leaf_size": 256
+    },
+    "val_metrics": {
+      "accuracy": 0.9394093686354379,
+      "roc_auc": 0.7408687684811128
+    }
+  },
+  {
+    "params": {
+      "verbose": false,
+      "max_leaf_size": 512
+    },
+    "val_metrics": {
+      "accuracy": 0.9404276985743381,
+      "roc_auc": 0.7034923808069451
+    }
+  },
+  {
+    "params": {
+      "verbose": false,
+      "max_leaf_size": 1024
+    },
+    "val_metrics": {
+      "accuracy": 0.9404276985743381,
+      "roc_auc": 0.7100264230746093
+    }
+  },
+  {
+    "params": {
+      "verbose": false,
+      "max_leaf_size": 2048
+    },
+    "val_metrics": {
+      "accuracy": 0.9404276985743381,
+      "roc_auc": 0.6397114285582072
+    }
+  }
+]
