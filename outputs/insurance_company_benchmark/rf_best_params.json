@@ -1,0 +1,11 @@
+{
+  "params": {
+    "n_estimators": 50,
+    "max_depth": 5,
+    "min_samples_split": 5
+  },
+  "val_metrics": {
+    "accuracy": 0.9404276985743381,
+    "roc_auc": 0.7339367604662677
+  }
+}
