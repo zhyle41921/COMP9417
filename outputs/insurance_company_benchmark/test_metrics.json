@@ -2,39 +2,70 @@
   "xrfm": {
     "params": {
       "verbose": false,
-      "max_leaf_size": 256
+      "max_leaf_size": 512
     },
     "test_metrics": {
-      "accuracy": 0.9399491094147583,
-      "roc_auc": 0.6382945757945758
-    },
-    "agop_top_eigenvalue": 8.545492172241211,
-    "agop_index": 77
+      "accuracy": 0.9404580152671755,
+      "inference_time_seconds": 0.016614600084722042,
+      "inference_time_per_sample_seconds": 8.455267218688062e-06,
+      "roc_auc": 0.6578398453398453,
+      "training_time_seconds": 5.736823600018397
+    }
   },
   "xgboost": {
     "params": {
       "subsample": 1.0,
       "colsample_bytree": 1.0,
-      "learning_rate": 0.03,
-      "n_estimators": 200,
+      "learning_rate": 0.05,
+      "n_estimators": 300,
       "max_depth": 6,
-      "reg_alpha": 0.0,
+      "reg_alpha": 0.1,
       "reg_lambda": 5.0
     },
     "test_metrics": {
-      "accuracy": 0.9394402035623409,
-      "roc_auc": 0.7086963961963962
+      "accuracy": 0.9348600508905852,
+      "inference_time_seconds": 0.00521229999139905,
+      "inference_time_per_sample_seconds": 2.6525699701776333e-06,
+      "roc_auc": 0.6986393236393236,
+      "training_time_seconds": 0.2261567999375984
     }
   },
   "random_forest": {
     "params": {
-      "n_estimators": 50,
-      "max_depth": 5,
-      "min_samples_split": 5
+      "n_estimators": 500,
+      "max_depth": 10,
+      "min_samples_split": 2,
+      "max_features": "log2"
     },
     "test_metrics": {
-      "accuracy": 0.9404580152671755,
-      "roc_auc": 0.7248792873792873
+      "accuracy": 0.9409669211195929,
+      "inference_time_seconds": 0.05483330006245524,
+      "inference_time_per_sample_seconds": 2.7904987309137524e-05,
+      "roc_auc": 0.7266136641136641,
+      "training_time_seconds": 0.5329342000186443
+    }
+  },
+  "interpretability": {
+    "output_dir": "C:\\Users\\atgee\\OneDrive\\COMP9417\\COMP9417\\outputs\\insurance_company_benchmark\\interpretability",
+    "summary": {
+      "files_created": [
+        "xrfm_agop_diagonal_by_leaf.csv",
+        "xrfm_agop_leaf_matrix_scores.csv",
+        "xrfm_agop_diagonal_summary.csv",
+        "agop_pca_loadings.csv",
+        "agop_pca_explained_variance.csv",
+        "agop_pca_pc1_feature_ranking.csv",
+        "mutual_information_scores.csv",
+        "permutation_importance_scores.csv",
+        "interpretability_feature_comparison.csv",
+        "interpretability_rank_spearman_correlation.csv",
+        "interpretability_score_spearman_correlation.csv",
+        "interpretability_top_20_overlap.csv",
+        "interpretability_top_20_combined_features.csv"
+      ],
+      "top_k": 20,
+      "n_features": 85,
+      "n_agop_leaves": 32
     }
   }
 }

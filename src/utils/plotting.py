@@ -45,3 +45,72 @@ def plot_agop_heatmap(
         print(f"Saved heatmap to: {output_path}")
 
     plt.show()
+
+def plot_rmse_vs_n(
+    metrics_df,
+    output_path,
+    figsize=(8, 6),
+):
+    output_path = Path(output_path)
+
+    if output_path.is_dir() or output_path.suffix == "":
+        output_path = output_path / "rmse_vs_n.png"
+
+    df = metrics_df.copy()
+    df = df.sort_values(["model", "train_size"])
+
+    plt.figure(figsize=figsize)
+
+    sns.lineplot(
+        data=df,
+        x="train_size",
+        y="rmse",
+        hue="model",
+        marker="o",
+    )
+
+    plt.xlabel("Training size (n)")
+    plt.ylabel("RMSE")
+    plt.title("Test RMSE vs Training Size")
+    plt.tight_layout()
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(output_path, dpi=300)
+    print(f"Saved RMSE plot to: {output_path}")
+
+    plt.show()
+
+
+def plot_training_time_vs_n(
+    metrics_df,
+    output_path,
+    figsize=(8, 6),
+):
+    output_path = Path(output_path)
+
+    if output_path.is_dir() or output_path.suffix == "":
+        output_path = output_path / "training_time_vs_n.png"
+
+    df = metrics_df.copy()
+    df = df.sort_values(["model", "train_size"])
+
+    plt.figure(figsize=figsize)
+
+    sns.lineplot(
+        data=df,
+        x="train_size",
+        y="training_time_seconds",
+        hue="model",
+        marker="o",
+    )
+
+    plt.xlabel("Training size (n)")
+    plt.ylabel("Training time (seconds)")
+    plt.title("Training Time vs Training Size")
+    plt.tight_layout()
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(output_path, dpi=300)
+    print(f"Saved training time plot to: {output_path}")
+
+    plt.show()

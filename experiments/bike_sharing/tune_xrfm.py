@@ -64,8 +64,7 @@ def main():
         y_val=y_val,
         results_path=output_dir / "xrfm_results.json",
         best_path=output_dir / "xrfm_best_params.json",
-        seed=SEED,
-        max_leaf_size_values=[256, 512, 1024, 2048],
+        seed=SEED
     )
 
     print("\nBest result:")

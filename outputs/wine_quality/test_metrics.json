@@ -5,41 +5,47 @@
       "max_leaf_size": 2048
     },
     "test_metrics": {
-      "mse": 0.37027686834335327,
-      "rmse": 0.6085038185119629,
-      "mae": 0.44323018193244934,
-      "r2": 0.5126915562981399
+      "mse": 0.38250038027763367,
+      "rmse": 0.6184661512788179,
+      "mae": 0.44791579246520996,
+      "r2": 0.4966046214103699,
+      "inference_time_seconds": 0.006625400041230023,
+      "training_time_seconds": 2.018737900070846
     }
   },
   "xgboost": {
     "params": {
       "subsample": 1.0,
       "colsample_bytree": 1.0,
-      "learning_rate": 0.2,
-      "n_estimators": 500,
+      "learning_rate": 0.1,
+      "n_estimators": 300,
       "max_depth": 6,
-      "reg_alpha": 0.0,
-      "reg_lambda": 1.0
+      "reg_alpha": 0.1,
+      "reg_lambda": 5.0
     },
     "test_metrics": {
-      "mse": 0.42619145626522803,
-      "rmse": 0.6528334062111314,
-      "mae": 0.44056509256362913,
-      "r2": 0.43910429614405744
+      "mse": 0.41699734330177307,
+      "rmse": 0.6457533145882978,
+      "mae": 0.4753536880016327,
+      "r2": 0.4512043595314026,
+      "inference_time_seconds": 0.0030483000446110964,
+      "training_time_seconds": 0.2569484000559896
     }
   },
   "random_forest": {
     "params": {
-      "n_estimators": 200,
-      "max_depth": 30,
+      "n_estimators": 500,
+      "max_depth": null,
       "min_samples_split": 2,
       "max_features": "sqrt"
     },
     "test_metrics": {
-      "mse": 0.3665607133373397,
-      "rmse": 0.605442576416079,
-      "mae": 0.44441243589743584,
-      "r2": 0.5175822361269184
+      "mse": 0.364202356923077,
+      "rmse": 0.6034918035260106,
+      "mae": 0.44198769230769236,
+      "r2": 0.5206859867100786,
+      "inference_time_seconds": 0.06532310007605702,
+      "training_time_seconds": 0.6190276999259368
     }
   }
 }

@@ -5,9 +5,13 @@
       "max_leaf_size": 2048
     },
     "test_metrics": {
-      "accuracy": 0.8472452552054542,
-      "roc_auc": 0.8959931843192506
-    }
+      "accuracy": 0.8430686075793871,
+      "inference_time_per_sample_seconds": 3.044685215242086e-05,
+      "roc_auc": 0.8936386944822385,
+      "training_time_seconds": 455.0125194999855
+    },
+    "agop_top_eigenvalue": 2.908878803253174,
+    "agop_index": 28
   },
   "xgboost": {
     "params": {
@@ -15,25 +19,29 @@
       "colsample_bytree": 1.0,
       "learning_rate": 0.1,
       "n_estimators": 200,
-      "max_depth": 5,
-      "reg_alpha": 1.0,
-      "reg_lambda": 1.0
+      "max_depth": 6,
+      "reg_alpha": 0.1,
+      "reg_lambda": 5.0
     },
     "test_metrics": {
-      "accuracy": 0.8714452429211965,
-      "roc_auc": 0.9259804754876162
+      "accuracy": 0.8711381364781033,
+      "inference_time_per_sample_seconds": 1.224881759628779e-06,
+      "roc_auc": 0.9258364922453755,
+      "training_time_seconds": 0.38716130005195737
     }
   },
   "random_forest": {
     "params": {
       "n_estimators": 500,
-      "max_depth": 10,
+      "max_depth": 20,
       "min_samples_split": 10,
-      "max_features": null
+      "max_features": "sqrt"
     },
     "test_metrics": {
-      "accuracy": 0.8634604754007739,
-      "roc_auc": 0.9146136404362488
+      "accuracy": 0.8626619986487316,
+      "inference_time_per_sample_seconds": 1.654553773958989e-05,
+      "roc_auc": 0.9133453918775971,
+      "training_time_seconds": 2.027993499999866
     }
   }
 }

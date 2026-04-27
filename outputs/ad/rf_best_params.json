@@ -1,11 +1,12 @@
 {
   "params": {
-    "n_estimators": 200,
+    "n_estimators": 500,
     "max_depth": null,
-    "min_samples_split": 5
+    "min_samples_split": 2,
+    "max_features": "log2"
   },
   "val_metrics": {
-    "accuracy": 0.9766233766233766,
-    "roc_auc": 0.9946803457775245
+    "accuracy": 0.974025974025974,
+    "roc_auc": 0.9956540324878882
   }
 }
