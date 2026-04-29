@@ -8,15 +8,15 @@ The repo is mainly scripts, so just install the Python requirements and run the 
 
 ## Folder layout
 
-- `experiments/` has one folder per dataset.
-- `experiments/*/load_data.py` builds the processed train/validation/test splits.
-- `experiments/*/tune_*.py` tunes one model for one dataset.
-- `experiments/*/<dataset>.py` runs the final test-set evaluation for that dataset.
+- `experiments/` has one folder per dataset
+- `experiments/*/load_data.py` builds the processed train/validation/test splits
+- `experiments/*/tune_*.py` tunes one model for one dataset
+- `experiments/*/<dataset>.py` runs the final test-set evaluation for that dataset
 - `src/tuning/` has the shared tuning code. The repeated grid search logic is in
-  `src/tuning/common.py`.
-- `src/utils/` has shared preprocessing, metrics, timing, AGOP, and plotting helpers.
-- `outputs/` has the saved parameters and results from runs we already did.
-- `notebooks/` has the rough notebook work, note these are not fixed and should not be looked at.
+  `src/tuning/common.py`
+- `src/utils/` has shared preprocessing, metrics, timing, AGOP, and ploting helpers
+- `outputs/` has the saved parameters and results from runs we already did
+- `notebooks/` has the rough notebook work, note these are not fixed and should not be looked at
 
 ## Datasets used
 
@@ -31,7 +31,7 @@ We used five datasets:
 | Wine Quality | regression | 6,497 | 12 |
 
 The main reason for using these was to get a mix of dataset sizes, regression vs
-classification, and easy vs annoying preprocessing.
+classification and easy vs annoying preprocessing.
 
 ## Setup
 
@@ -51,11 +51,11 @@ pip install -r requirements.txt
 ```
 
 The main packages are `numpy`, `pandas`, `scikit-learn`, `xgboost`, `xrfm`,
-`torch`, `matplotlib`, and `seaborn`.
+`torch`, `matplotlib`, and `seaborn`
 
 ## How to run it
 
-Run commands from the repo root, i.e. the folder containing this README.
+Run commands from the repo root, i.e. the folder containins this README.
 
 ### 1. Rebuild the processed data splits
 
@@ -109,8 +109,8 @@ Some of these take a while, especially the xRFM runs on bigger datasets.
 
 ### 3. Run final evaluation
 
-These scripts load the best saved params and write the final metrics into
-`outputs/<dataset>/metrics.csv`.
+These script load the best saved params and write the final metrics into
+`outputs/<dataset>/metrics.csv`
 
 ```bash
 python3 experiments/adult/adult.py
@@ -154,17 +154,17 @@ skip tuning and just run the final dataset scripts if you only want metrics.
 
 ## What the scripts output
 
-The results are saved under `outputs/<dataset>/`. The exact files depend on the
+The result are saved under `outputs/<dataset>/`. The exact files depend on the
 dataset, but the common ones are:
 
-- `*_best_params.json` for tuned hyperparameters.
-- `*_results.json` for validation/tuning results.
-- `metrics.csv` for the final model comparison.
-- `test_metrics.json` for final test-set values.
-- `xrfm_best_agop.csv` and related files for the AGOP summaries.
+- `*_best_params.json` for tuned hyperparameters
+- `*_results.json` for validation/tuning results
+- `metrics.csv` for the final model comparison
+- `test_metrics.json` for final test-set values
+- `xrfm_best_agop.csv` and related files for the AGOP summaries
 
 The Insurance experiment also writes extra interpretability files under
-`outputs/insurance_company_benchmark/interpretability/`.
+`outputs/insurance_company_benchmark/interpretability/`
 
 ## Model details
 
