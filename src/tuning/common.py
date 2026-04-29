@@ -6,7 +6,6 @@ from pathlib import Path
 import numpy as np
 from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, r2_score, roc_auc_score
 
-
 def evaluate_classification(model, X, y):
     y_pred = model.predict(X)
     metrics = {"accuracy": float(accuracy_score(y, y_pred))}
@@ -18,11 +17,10 @@ def evaluate_classification(model, X, y):
         elif y_score.ndim == 2 and y_score.shape[1] == 1:
             y_score = y_score[:, 0]
         metrics["roc_auc"] = float(roc_auc_score(y, y_score))
-    except Exception as e:
-        print(f"Could not compute ROC-AUC: {e}")
+    except Exception:
+        pass
 
     return metrics
-
 
 def evaluate_regression(model, X, y):
     y_pred = model.predict(X)
@@ -34,7 +32,6 @@ def evaluate_regression(model, X, y):
         "r2": float(r2_score(y, y_pred)),
     }
 
-
 def pick_best_classification(results):
     if not results:
         raise ValueError("No successful tuning results to choose from.")
@@ -43,12 +40,10 @@ def pick_best_classification(results):
         key=lambda r: r["val_metrics"].get("roc_auc", r["val_metrics"]["accuracy"]),
     )
 
-
 def pick_best_regression(results):
     if not results:
         raise ValueError("No successful tuning results to choose from.")
     return min(results, key=lambda r: r["val_metrics"]["rmse"])
-
 
 def run_grid_search(
     X_train,
@@ -81,7 +76,6 @@ def run_grid_search(
     for combo in itertools.product(*values):
         grid_params = dict(zip(keys, combo))
         params = {**base_params, **grid_params}
-        print(f"[GRID] Testing {params}")
 
         try:
             model = make_model(params, seed)
@@ -89,13 +83,10 @@ def run_grid_search(
             metrics = evaluate_model(model, X_val, y_val)
             result = {"params": params, "val_metrics": metrics}
             results_all.append(result)
-            print(metrics)
-        except Exception as e:
-            print(f"Failed: {e}")
+        except Exception:
+            pass
 
     final_best = pick_best(results_all)
-    print("\nFinal best params:")
-    print(final_best["params"])
 
     with open(results_path, "w") as f:
         json.dump(results_all, f, indent=2)

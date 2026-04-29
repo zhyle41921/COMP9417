@@ -42,7 +42,6 @@ def plot_agop_heatmap(
         output_path = Path(output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         plt.savefig(output_path, dpi=300)
-        print(f"Saved heatmap to: {output_path}")
 
     plt.show()
 
@@ -76,10 +75,8 @@ def plot_rmse_vs_n(
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     plt.savefig(output_path, dpi=300)
-    print(f"Saved RMSE plot to: {output_path}")
 
     plt.show()
-
 
 def plot_training_time_vs_n(
     metrics_df,
@@ -111,6 +108,5 @@ def plot_training_time_vs_n(
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     plt.savefig(output_path, dpi=300)
-    print(f"Saved training time plot to: {output_path}")
 
     plt.show()

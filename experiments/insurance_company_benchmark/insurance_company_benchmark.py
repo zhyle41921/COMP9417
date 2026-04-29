@@ -34,16 +34,13 @@ from src.utils.experiment import (
     load_best_params,
 )
 
-
 def evaluate_model(model, X, y):
     return evaluate_classification(model, X, y, include_total_time=True)
-
 
 def rank_features(df, score_col, rank_col):
     df = df.copy()
     df[rank_col] = df[score_col].rank(ascending=False, method="min")
     return df
-
 
 def extract_agop_diagonals(model, feature_names, interpret_dir):
     agops = model.collect_best_agops()
@@ -112,7 +109,6 @@ def extract_agop_diagonals(model, feature_names, interpret_dir):
     )
 
     return leaf_diag_df, leaf_score_df, avg_diag_df
-
 
 def compute_agop_pca_loadings(leaf_diag_df, feature_names, interpret_dir, n_components=5):
     agop_matrix = (
@@ -186,7 +182,6 @@ def compute_agop_pca_loadings(leaf_diag_df, feature_names, interpret_dir, n_comp
 
     return pca_loadings_df, explained_df, pc1_df
 
-
 def compute_mutual_information(X_train_df, y_train_s, interpret_dir):
     mi = mutual_info_classif(
         X_train_df,
@@ -213,7 +208,6 @@ def compute_mutual_information(X_train_df, y_train_s, interpret_dir):
     )
 
     return mi_df
-
 
 def compute_permutation_importance_scores(model, X_test_df, y_test_s, interpret_dir):
     result = permutation_importance(
@@ -244,7 +238,6 @@ def compute_permutation_importance_scores(model, X_test_df, y_test_s, interpret_
     )
 
     return perm_df
-
 
 def make_interpretability_comparison(
     agop_summary_df,
@@ -393,7 +386,6 @@ def make_interpretability_comparison(
 
     return comparison_df, rank_corr_df, score_corr_df, overlap_df
 
-
 def run_interpretability_analysis(
     xrfm_model,
     rf_model,
@@ -479,7 +471,6 @@ def run_interpretability_analysis(
         "overlap_df": overlap_df,
     }
 
-
 def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, output_dir):
     metrics_df = pd.DataFrame([
         {
@@ -518,7 +509,6 @@ def make_metrics_csv(xrfm_metrics, xgb_metrics, rf_metrics, output_dir):
     metrics_df.to_csv(metrics_csv_path, index=False)
 
     return metrics_df, metrics_csv_path
-
 
 def main():
     output_dir = ROOT / "outputs" / "insurance_company_benchmark"
@@ -627,26 +617,12 @@ def main():
         output_dir=output_dir,
     )
 
-    print("\nTest metrics:")
-    print(json.dumps(results, indent=2))
 
-    print("\nSaved metrics to:")
-    print(metrics_csv_path)
 
-    print("\nMetrics:")
-    print(metrics_df)
 
-    print("\nInterpretability outputs saved to:")
-    print(interpretability_results["interpret_dir"])
 
-    print("\nTop combined interpretability features:")
-    print(interpretability_results["comparison_df"].head(20))
 
-    print("\nRank agreement:")
-    print(interpretability_results["rank_corr_df"])
 
-    print("\nTop-20 overlap:")
-    print(interpretability_results["overlap_df"])
 
 
 if __name__ == "__main__":

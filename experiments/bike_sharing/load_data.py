@@ -48,10 +48,6 @@ def save_bike_splits(seed=SEED):
     y_val.to_csv(output_dir / "y_val.csv", index=False)
     y_test.to_csv(output_dir / "y_test.csv", index=False)
 
-    print("Saved fixed bike_sharing splits to:", output_dir)
-    print("X_train:", X_train.shape)
-    print("X_val:", X_val.shape)
-    print("X_test:", X_test.shape)
 
 def load_bike_splits():
     split_dir = ROOT / "experiments" / "bike_sharing" / "data"
@@ -65,7 +61,6 @@ def load_bike_splits():
     ]
 
     if not all(path.exists() for path in required_files):
-        print("Split files not found. Creating them now...")
         save_bike_splits(seed=SEED)
 
     X_train = pd.read_csv(split_dir / "X_train.csv")

@@ -33,7 +33,6 @@ from src.utils.plotting import plot_rmse_vs_n, plot_training_time_vs_n
 
 SUBSAMPLE_SIZES = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000]
 
-
 def evaluate_three_models(
     X_train_df,
     X_val_df,
@@ -75,14 +74,12 @@ def evaluate_three_models(
         metric_row("random_forest", rf_metrics, fields, extra),
     ]
 
-
 def run_subsample_experiments(splits, best_xrfm_params, best_xgb_params, best_rf_params):
     X_train_df, X_val_df, X_test_df, y_train_s, y_val_s, y_test_s = splits
     rng = np.random.default_rng(SEED)
     rows = []
 
     for n in SUBSAMPLE_SIZES:
-        print(f"\nRunning subsample size n={n}")
         sample_idx = rng.choice(len(X_train_df), size=n, replace=False)
 
         rows.extend(evaluate_three_models(
@@ -99,7 +96,6 @@ def run_subsample_experiments(splits, best_xrfm_params, best_xgb_params, best_rf
         ))
 
     return rows
-
 
 def main():
     output_dir = ROOT / "outputs" / "bike_sharing"
@@ -128,8 +124,6 @@ def main():
 
     metrics_df, metrics_csv_path = write_metrics_csv(rows, output_dir)
 
-    print("\nSaved metrics to:", metrics_csv_path)
-    print(metrics_df)
 
     plot_rmse_vs_n(metrics_df, output_dir)
     plot_training_time_vs_n(metrics_df, output_dir)

@@ -20,7 +20,6 @@ from src.utils.experiment import run_tuning_job
 from experiments.insurance_company_benchmark.load_data import load_insurance_splits
 from src.tuning.xrfm_tuner import tune_xrfm
 
-
 def main():
     output_dir = ROOT / "outputs" / "insurance_company_benchmark"
     run_tuning_job(

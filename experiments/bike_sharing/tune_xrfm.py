@@ -20,7 +20,6 @@ from src.utils.experiment import run_tuning_job
 from experiments.bike_sharing.load_data import load_bike_splits
 from src.tuning.xrfm_tuner_reg import tune_xrfm_regression
 
-
 def main():
     output_dir = ROOT / "outputs" / "bike_sharing"
     run_tuning_job(

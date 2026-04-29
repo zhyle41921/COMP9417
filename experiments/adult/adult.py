@@ -35,7 +35,6 @@ from src.utils.experiment import (
 from src.utils.agop import extract_highest_agop_summary
 from experiments.adult.load_data import load_adult_splits
 
-
 def main():
     output_dir = ROOT / "outputs" / "adult"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -45,9 +44,6 @@ def main():
     print_shapes(X_train_df, X_val_df, X_test_df)
 
     best_xrfm_params, best_xgb_params, best_rf_params = load_best_params(output_dir)
-    print("Best xRFM params:", best_xrfm_params)
-    print("Best XGB params:", best_xgb_params)
-    print("Best RF params:", best_rf_params)
 
     X_train_np, X_val_np, X_test_np, y_train_np, y_val_np, y_test_np = to_numpy_splits(
         splits, y_dtype=np.int64
@@ -102,10 +98,6 @@ def main():
         metric_row("random_forest", rf_metrics, fields),
     ], output_dir)
 
-    print("\nTest metrics:")
-    print(json.dumps(results, indent=2))
-    print("\nSaved metrics to:", metrics_csv_path)
-    print(metrics_df)
 
 
 if __name__ == "__main__":

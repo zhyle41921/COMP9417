@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, r2_score, roc_auc_score
 
-
 def load_best_params(output_dir):
     output_dir = Path(output_dir)
     names = ("xrfm", "xgb", "rf")
@@ -18,12 +17,10 @@ def load_best_params(output_dir):
 
     return tuple(params)
 
-
 def fit_with_time(model, *fit_args, **fit_kwargs):
     start = time.perf_counter()
     model.fit(*fit_args, **fit_kwargs)
     return model, float(time.perf_counter() - start)
-
 
 def to_numpy_splits(splits, x_dtype=np.float32, y_dtype=np.float32):
     X_train, X_val, X_test, y_train, y_val, y_test = splits
@@ -35,7 +32,6 @@ def to_numpy_splits(splits, x_dtype=np.float32, y_dtype=np.float32):
         np.asarray(y_val, dtype=y_dtype),
         np.asarray(y_test, dtype=y_dtype),
     )
-
 
 def evaluate_classification(model, X, y, include_total_time=False):
     start = time.perf_counter()
@@ -61,7 +57,6 @@ def evaluate_classification(model, X, y, include_total_time=False):
 
     return metrics
 
-
 def evaluate_regression(model, X, y, include_full_metrics=False, include_total_time=False):
     start = time.perf_counter()
     y_pred = model.predict(X)
@@ -86,18 +81,15 @@ def evaluate_regression(model, X, y, include_full_metrics=False, include_total_t
 
     return metrics
 
-
 def save_json(path, data):
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
-
 
 def write_metrics_csv(rows, output_dir):
     metrics_df = pd.DataFrame(rows)
     metrics_csv_path = Path(output_dir) / "metrics.csv"
     metrics_df.to_csv(metrics_csv_path, index=False)
     return metrics_df, metrics_csv_path
-
 
 def metric_row(model_name, metrics, fields, extra=None):
     row = {"model": model_name}
@@ -106,13 +98,8 @@ def metric_row(model_name, metrics, fields, extra=None):
     row.update({field: metrics.get(field, "") for field in fields})
     return row
 
-
 def print_shapes(X_train, X_val, X_test):
-    print("Shapes:")
-    print("X_train:", X_train.shape)
-    print("X_val:", X_val.shape)
-    print("X_test:", X_test.shape)
-
+    pass
 
 def run_tuning_job(
     output_dir,
@@ -131,8 +118,7 @@ def run_tuning_job(
     X_train, X_val, X_test, y_train, y_val, y_test = load_splits()
 
     if print_columns:
-        print("Columns after preprocessing:")
-        print(list(X_train.columns))
+        pass
 
     if x_dtype is not None or y_dtype is not None:
         X_train, X_val, X_test, y_train, y_val, y_test = to_numpy_splits(
@@ -158,7 +144,5 @@ def run_tuning_job(
 
     best_result, results = tune_func(**kwargs)
 
-    print("\nBest result:")
-    print(json.dumps(best_result, indent=2))
 
     return best_result, results

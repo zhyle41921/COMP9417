@@ -20,7 +20,6 @@ from src.utils.experiment import run_tuning_job
 from experiments.ad.load_data import load_ad_splits
 from src.tuning.xgb_tuner import tune_xgb
 
-
 def main():
     output_dir = ROOT / "outputs" / "ad"
     run_tuning_job(

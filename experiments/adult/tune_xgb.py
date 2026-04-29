@@ -20,7 +20,6 @@ from src.utils.experiment import run_tuning_job
 from experiments.adult.load_data import load_adult_splits
 from src.tuning.xgb_tuner import tune_xgb
 
-
 def main():
     output_dir = ROOT / "outputs" / "adult"
     run_tuning_job(

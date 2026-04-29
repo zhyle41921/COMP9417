@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 
-
 def to_numpy_agop(agop):
     if hasattr(agop, "detach"):
         agop = agop.detach().cpu().numpy()
@@ -12,7 +11,6 @@ def to_numpy_agop(agop):
         agop = np.diag(agop)
 
     return agop
-
 
 def extract_highest_agop_summary(model, feature_names, output_dir, top_k=20):
     agops = model.collect_best_agops()

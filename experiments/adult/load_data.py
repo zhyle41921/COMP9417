@@ -176,7 +176,6 @@ def group_adult_categories(df):
 def load_adult_file(filename):
     data_path = ROOT / "experiments" / "adult" / "data" / filename
 
-    print("Reading:", data_path)
 
     df = pd.read_csv(
         data_path,
@@ -253,13 +252,7 @@ def save_adult_splits(seed=SEED):
     y_val.to_csv(output_dir / "y_val.csv", index=False)
     y_test.to_csv(output_dir / "y_test.csv", index=False)
 
-    print("Saved fixed Adult splits to:", output_dir)
-    print("X_train:", X_train.shape)
-    print("X_val:", X_val.shape)
-    print("X_test:", X_test.shape)
 
-    print("One-hot check:")
-    print(X_train.filter(like="workclass_group_").sum(axis=1).value_counts().head())
 
     for prefix in [
         "race_",
@@ -272,7 +265,6 @@ def save_adult_splits(seed=SEED):
         "native_country_group_",
     ]:
         cols = [c for c in X_train.columns if c.startswith(prefix)]
-        print(prefix, X_train[cols].sum(axis=1).value_counts().head())
 
 def load_adult_splits():
     split_dir = ROOT / "experiments" / "adult" / "data"

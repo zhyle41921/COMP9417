@@ -34,7 +34,6 @@ from src.utils.experiment import (
 )
 from experiments.ad.load_data import load_ad_splits
 
-
 def main():
     output_dir = ROOT / "outputs" / "ad"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -85,8 +84,6 @@ def main():
         metric_row("random_forest", rf_metrics, fields),
     ], output_dir)
 
-    print("\nSaved metrics to:", metrics_csv_path)
-    print(metrics_df)
 
 
 if __name__ == "__main__":

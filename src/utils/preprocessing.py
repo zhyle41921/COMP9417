@@ -13,7 +13,9 @@ def split_features_target(df, target_col):
     return X, y
 
 def split_data(X, y, val_size=0.2, test_size=0.2, random_state=RANDOM_STATE, stratify=True):
-    stratify_labels = y if stratify else None
+    stratify_labels = None
+    if stratify:
+        stratify_labels = y
 
     X_train, X_temp, y_train, y_temp = train_test_split(
         X,
@@ -24,7 +26,9 @@ def split_data(X, y, val_size=0.2, test_size=0.2, random_state=RANDOM_STATE, str
     )
 
     test_ratio = test_size / (val_size + test_size)
-    stratify_temp = y_temp if stratify else None
+    stratify_temp = None
+    if stratify:
+        stratify_temp = y_temp
 
     X_val, X_test, y_val, y_test = train_test_split(
         X_temp,

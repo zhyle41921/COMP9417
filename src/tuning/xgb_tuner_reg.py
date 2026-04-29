@@ -4,7 +4,6 @@ from src.tuning.common import evaluate_regression, pick_best_regression, run_gri
 
 SEED = 42
 
-
 def tune_xgb_regression(
     X_train,
     y_train,

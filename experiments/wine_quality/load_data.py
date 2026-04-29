@@ -46,10 +46,6 @@ def save_wine_splits(seed=SEED):
     y_val.to_csv(output_dir / "y_val.csv", index=False)
     y_test.to_csv(output_dir / "y_test.csv", index=False)
 
-    print("Saved fixed wine_quality splits to:", output_dir)
-    print("X_train:", X_train.shape)
-    print("X_val:", X_val.shape)
-    print("X_test:", X_test.shape)
 
 def load_wine_splits():
     split_dir = ROOT / "experiments" / "wine_quality" / "data"

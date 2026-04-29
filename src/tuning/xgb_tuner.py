@@ -8,7 +8,6 @@ from src.tuning.common import (
 
 SEED = 42
 
-
 def tune_xgb(
     X_train,
     y_train,

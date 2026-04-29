@@ -20,7 +20,6 @@ from src.utils.experiment import run_tuning_job
 from experiments.wine_quality.load_data import load_wine_splits
 from src.tuning.xgb_tuner_reg import tune_xgb_regression
 
-
 def main():
     output_dir = ROOT / "outputs" / "wine_quality"
     run_tuning_job(

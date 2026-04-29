@@ -35,7 +35,6 @@ from src.utils.experiment import (
 from src.utils.agop import extract_highest_agop_summary
 from experiments.wine_quality.load_data import load_wine_splits
 
-
 def main():
     output_dir = ROOT / "outputs" / "wine_quality"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -101,10 +100,6 @@ def main():
         metric_row("random_forest", rf_metrics, fields),
     ], output_dir)
 
-    print("\nTest metrics:")
-    print(json.dumps(results, indent=2))
-    print("\nSaved metrics to:", metrics_csv_path)
-    print(metrics_df)
 
 
 if __name__ == "__main__":
