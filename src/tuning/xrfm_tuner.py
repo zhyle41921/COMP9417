@@ -8,6 +8,11 @@ from src.tuning.common import (
 
 SEED = 42
 
+
+def make_xrfm(params, seed):
+    return xRFM(**params, random_state=seed)
+
+
 def tune_xrfm(
     X_train,
     y_train,
@@ -25,12 +30,9 @@ def tune_xrfm(
     if param_grid is None:
         param_grid = {"max_leaf_size": [256, 512, 1024, 2048]}
 
-    def make_model(params, seed):
-        return xRFM(**params, random_state=seed)
-
     return run_grid_search(
         X_train, y_train, X_val, y_val,
         results_path, best_path, seed, base_params, param_grid,
-        make_model, evaluate_classification, pick_best_classification,
+        make_xrfm, evaluate_classification, pick_best_classification,
         fit_kwargs={"X_val": X_val, "y_val": y_val},
     )

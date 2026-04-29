@@ -1,5 +1,4 @@
 from sklearn.ensemble import RandomForestClassifier
-
 from src.tuning.common import (
     evaluate_classification,
     pick_best_classification,
@@ -7,6 +6,11 @@ from src.tuning.common import (
 )
 
 SEED = 42
+
+
+def make_rf_classifier(params, seed):
+    return RandomForestClassifier(random_state=seed, n_jobs=-1, **params)
+
 
 def tune_rf(
     X_train,
@@ -30,11 +34,8 @@ def tune_rf(
             "max_features": ["sqrt", "log2", None],
         }
 
-    def make_model(params, seed):
-        return RandomForestClassifier(random_state=seed, n_jobs=-1, **params)
-
     return run_grid_search(
         X_train, y_train, X_val, y_val,
         results_path, best_path, seed, base_params, param_grid,
-        make_model, evaluate_classification, pick_best_classification,
+        make_rf_classifier, evaluate_classification, pick_best_classification,
     )

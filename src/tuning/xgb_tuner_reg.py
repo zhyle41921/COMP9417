@@ -4,6 +4,18 @@ from src.tuning.common import evaluate_regression, pick_best_regression, run_gri
 
 SEED = 42
 
+
+def make_xgb_regressor(params, seed):
+    return XGBRegressor(
+        objective="reg:squarederror",
+        eval_metric="rmse",
+        random_state=seed,
+        n_jobs=-1,
+        tree_method="hist",
+        **params,
+    )
+
+
 def tune_xgb_regression(
     X_train,
     y_train,
@@ -27,18 +39,8 @@ def tune_xgb_regression(
             "reg_lambda": [1.0, 5.0],
         }
 
-    def make_model(params, seed):
-        return XGBRegressor(
-            objective="reg:squarederror",
-            eval_metric="rmse",
-            random_state=seed,
-            n_jobs=-1,
-            tree_method="hist",
-            **params,
-        )
-
     return run_grid_search(
         X_train, y_train, X_val, y_val,
         results_path, best_path, seed, base_params, param_grid,
-        make_model, evaluate_regression, pick_best_regression,
+        make_xgb_regressor, evaluate_regression, pick_best_regression,
     )

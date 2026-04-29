@@ -1,14 +1,12 @@
-SEED = 42
-
 import sys
 from pathlib import Path
-
 import pandas as pd
+from src.utils.preprocessing import preprocess_data
+
+SEED = 42
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
-
-from src.utils.preprocessing import preprocess_data
 
 def load_insurance_data():
     data_path = (
@@ -27,7 +25,6 @@ def load_insurance_data():
         low_memory=False,
     )
 
-    # These are metadata columns, not model features.
     drop_cols = [c for c in ["SOURCE_FILE", "SOURCE_ROW"] if c in df.columns]
     if drop_cols:
         df = df.drop(columns=drop_cols)

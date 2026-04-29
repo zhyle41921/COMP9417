@@ -1,7 +1,6 @@
 import json
 import time
 from pathlib import Path
-
 import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, r2_score, roc_auc_score
@@ -143,6 +142,5 @@ def run_tuning_job(
         kwargs["param_grid"] = param_grid
 
     best_result, results = tune_func(**kwargs)
-
 
     return best_result, results

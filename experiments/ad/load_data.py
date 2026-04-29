@@ -1,14 +1,12 @@
-SEED = 42
-
 import sys
 from pathlib import Path
-
 import pandas as pd
+from src.utils.preprocessing import preprocess_data
+
+SEED = 42
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
-
-from src.utils.preprocessing import preprocess_data
 
 def load_ad_data():
     n_features = 1558
@@ -55,7 +53,6 @@ def save_ad_splits(seed=SEED):
     y_train.to_csv(output_dir / "y_train.csv", index=False)
     y_val.to_csv(output_dir / "y_val.csv", index=False)
     y_test.to_csv(output_dir / "y_test.csv", index=False)
-
 
 def load_ad_splits():
     split_dir = ROOT / "experiments" / "ad" / "data"

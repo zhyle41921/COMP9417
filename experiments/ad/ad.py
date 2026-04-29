@@ -1,26 +1,11 @@
-SEED = 42
-N_THREADS = 4
-
 import os
 import sys
 from pathlib import Path
-
-os.environ["PYTHONHASHSEED"] = str(SEED)
-os.environ["OMP_NUM_THREADS"] = str(N_THREADS)
-os.environ["MKL_NUM_THREADS"] = str(N_THREADS)
-os.environ["OPENBLAS_NUM_THREADS"] = str(N_THREADS)
-os.environ["VECLIB_MAXIMUM_THREADS"] = str(N_THREADS)
-
 import json
-
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from xrfm import xRFM
-
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.append(str(ROOT))
-
 from src.utils.experiment import (
     evaluate_classification,
     evaluate_regression,
@@ -33,6 +18,18 @@ from src.utils.experiment import (
     write_metrics_csv,
 )
 from experiments.ad.load_data import load_ad_splits
+
+SEED = 42
+N_THREADS = 4
+
+os.environ["PYTHONHASHSEED"] = str(SEED)
+os.environ["OMP_NUM_THREADS"] = str(N_THREADS)
+os.environ["MKL_NUM_THREADS"] = str(N_THREADS)
+os.environ["OPENBLAS_NUM_THREADS"] = str(N_THREADS)
+os.environ["VECLIB_MAXIMUM_THREADS"] = str(N_THREADS)
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.append(str(ROOT))
 
 def main():
     output_dir = ROOT / "outputs" / "ad"
@@ -83,8 +80,6 @@ def main():
         metric_row("xgboost", xgb_metrics, fields),
         metric_row("random_forest", rf_metrics, fields),
     ], output_dir)
-
-
 
 if __name__ == "__main__":
     main()

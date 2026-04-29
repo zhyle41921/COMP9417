@@ -1,9 +1,13 @@
-SEED = 42
-THREADS = 4
-
 import os
 import sys
 from pathlib import Path
+import numpy as np
+from src.utils.experiment import run_tuning_job
+from experiments.adult.load_data import load_adult_splits
+from src.tuning.xrfm_tuner import tune_xrfm
+
+SEED = 42
+THREADS = 4
 
 os.environ["PYTHONHASHSEED"] = str(SEED)
 os.environ["OMP_NUM_THREADS"] = str(THREADS)
@@ -11,14 +15,8 @@ os.environ["MKL_NUM_THREADS"] = str(THREADS)
 os.environ["OPENBLAS_NUM_THREADS"] = str(THREADS)
 os.environ["VECLIB_MAXIMUM_THREADS"] = str(THREADS)
 
-import numpy as np
-
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
-
-from src.utils.experiment import run_tuning_job
-from experiments.adult.load_data import load_adult_splits
-from src.tuning.xrfm_tuner import tune_xrfm
 
 def main():
     output_dir = ROOT / "outputs" / "adult"
@@ -32,7 +30,6 @@ def main():
         y_dtype=np.int64,
         param_grid={"max_leaf_size": [2048, 4096, 8192]},
     )
-
 
 if __name__ == "__main__":
     main()

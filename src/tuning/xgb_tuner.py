@@ -8,6 +8,18 @@ from src.tuning.common import (
 
 SEED = 42
 
+
+def make_xgb_classifier(params, seed):
+    return XGBClassifier(
+        objective="binary:logistic",
+        eval_metric="logloss",
+        random_state=seed,
+        n_jobs=-1,
+        tree_method="hist",
+        **params,
+    )
+
+
 def tune_xgb(
     X_train,
     y_train,
@@ -31,18 +43,8 @@ def tune_xgb(
             "reg_lambda": [1.0, 5.0],
         }
 
-    def make_model(params, seed):
-        return XGBClassifier(
-            objective="binary:logistic",
-            eval_metric="logloss",
-            random_state=seed,
-            n_jobs=-1,
-            tree_method="hist",
-            **params,
-        )
-
     return run_grid_search(
         X_train, y_train, X_val, y_val,
         results_path, best_path, seed, base_params, param_grid,
-        make_model, evaluate_classification, pick_best_classification,
+        make_xgb_classifier, evaluate_classification, pick_best_classification,
     )

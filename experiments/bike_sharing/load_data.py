@@ -1,14 +1,12 @@
-SEED = 42
-
 import sys
 from pathlib import Path
-
 import pandas as pd
+from src.utils.preprocessing import preprocess_data
+
+SEED = 42
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
-
-from src.utils.preprocessing import preprocess_data
 
 def load_bike_sharing_data():
     data_path = ROOT / "experiments" / "bike_sharing" / "data" / "hour.csv"
@@ -21,7 +19,6 @@ def load_bike_sharing_data():
         low_memory=False,
     )
 
-    # Keep it simple: drop leakage and non-useful ID/date columns.
     df = df.drop(columns=["instant", "dteday", "casual", "registered"])
 
     return df
@@ -47,7 +44,6 @@ def save_bike_splits(seed=SEED):
     y_train.to_csv(output_dir / "y_train.csv", index=False)
     y_val.to_csv(output_dir / "y_val.csv", index=False)
     y_test.to_csv(output_dir / "y_test.csv", index=False)
-
 
 def load_bike_splits():
     split_dir = ROOT / "experiments" / "bike_sharing" / "data"

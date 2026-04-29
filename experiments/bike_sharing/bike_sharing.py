@@ -1,25 +1,11 @@
-SEED = 42
-N_THREADS = 4
-
 import os
 import sys
 from pathlib import Path
-
-os.environ["PYTHONHASHSEED"] = str(SEED)
-os.environ["OMP_NUM_THREADS"] = str(N_THREADS)
-os.environ["MKL_NUM_THREADS"] = str(N_THREADS)
-os.environ["OPENBLAS_NUM_THREADS"] = str(N_THREADS)
-os.environ["VECLIB_MAXIMUM_THREADS"] = str(N_THREADS)
-
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from xgboost import XGBRegressor
 from xrfm import xRFM
-
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.append(str(ROOT))
-
 from experiments.bike_sharing.load_data import load_bike_splits
 from src.utils.experiment import (
     evaluate_regression,
@@ -30,6 +16,18 @@ from src.utils.experiment import (
     write_metrics_csv,
 )
 from src.utils.plotting import plot_rmse_vs_n, plot_training_time_vs_n
+
+SEED = 42
+N_THREADS = 4
+
+os.environ["PYTHONHASHSEED"] = str(SEED)
+os.environ["OMP_NUM_THREADS"] = str(N_THREADS)
+os.environ["MKL_NUM_THREADS"] = str(N_THREADS)
+os.environ["OPENBLAS_NUM_THREADS"] = str(N_THREADS)
+os.environ["VECLIB_MAXIMUM_THREADS"] = str(N_THREADS)
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.append(str(ROOT))
 
 SUBSAMPLE_SIZES = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000]
 
@@ -127,7 +125,6 @@ def main():
 
     plot_rmse_vs_n(metrics_df, output_dir)
     plot_training_time_vs_n(metrics_df, output_dir)
-
 
 if __name__ == "__main__":
     main()

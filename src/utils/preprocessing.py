@@ -118,7 +118,6 @@ def preprocess_data(
     if do_impute:
         X = impute_missing_values(X)
 
-    # Scale BEFORE encoding so one-hot columns stay 0/1.
     if do_scale:
         X = scale_numeric_features(X)
 

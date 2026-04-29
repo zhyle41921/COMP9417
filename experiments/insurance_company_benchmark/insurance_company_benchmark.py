@@ -1,18 +1,7 @@
-SEED = 42
-N_THREADS = 4
-
 import os
 import sys
 from pathlib import Path
-
-os.environ["PYTHONHASHSEED"] = str(SEED)
-os.environ["OMP_NUM_THREADS"] = str(N_THREADS)
-os.environ["MKL_NUM_THREADS"] = str(N_THREADS)
-os.environ["OPENBLAS_NUM_THREADS"] = str(N_THREADS)
-os.environ["VECLIB_MAXIMUM_THREADS"] = str(N_THREADS)
-
 import json
-
 import numpy as np
 import pandas as pd
 from sklearn.decomposition import PCA
@@ -22,10 +11,6 @@ from sklearn.inspection import permutation_importance
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 from xrfm import xRFM
-
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.append(str(ROOT))
-
 from experiments.insurance_company_benchmark.load_data import load_insurance_splits
 from src.utils.agop import to_numpy_agop
 from src.utils.experiment import (
@@ -33,6 +18,18 @@ from src.utils.experiment import (
     fit_with_time,
     load_best_params,
 )
+
+SEED = 42
+N_THREADS = 4
+
+os.environ["PYTHONHASHSEED"] = str(SEED)
+os.environ["OMP_NUM_THREADS"] = str(N_THREADS)
+os.environ["MKL_NUM_THREADS"] = str(N_THREADS)
+os.environ["OPENBLAS_NUM_THREADS"] = str(N_THREADS)
+os.environ["VECLIB_MAXIMUM_THREADS"] = str(N_THREADS)
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.append(str(ROOT))
 
 def evaluate_model(model, X, y):
     return evaluate_classification(model, X, y, include_total_time=True)
@@ -616,14 +613,6 @@ def main():
         rf_metrics=rf_metrics,
         output_dir=output_dir,
     )
-
-
-
-
-
-
-
-
 
 if __name__ == "__main__":
     main()

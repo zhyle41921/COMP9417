@@ -1,13 +1,10 @@
-# experiments/adult/load_data.py
-
-SEED = 42
-
 import sys
 from pathlib import Path
-
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+
+SEED = 42
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
@@ -176,7 +173,6 @@ def group_adult_categories(df):
 def load_adult_file(filename):
     data_path = ROOT / "experiments" / "adult" / "data" / filename
 
-
     df = pd.read_csv(
         data_path,
         header=None,
@@ -251,8 +247,6 @@ def save_adult_splits(seed=SEED):
     y_train.to_csv(output_dir / "y_train.csv", index=False)
     y_val.to_csv(output_dir / "y_val.csv", index=False)
     y_test.to_csv(output_dir / "y_test.csv", index=False)
-
-
 
     for prefix in [
         "race_",

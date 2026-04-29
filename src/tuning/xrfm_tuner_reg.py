@@ -4,6 +4,11 @@ from src.tuning.common import evaluate_regression, pick_best_regression, run_gri
 
 SEED = 42
 
+
+def make_xrfm(params, seed):
+    return xRFM(**params, random_state=seed)
+
+
 def tune_xrfm_regression(
     X_train,
     y_train,
@@ -21,12 +26,9 @@ def tune_xrfm_regression(
     if param_grid is None:
         param_grid = {"max_leaf_size": [256, 512, 1024, 2048]}
 
-    def make_model(params, seed):
-        return xRFM(**params, random_state=seed)
-
     return run_grid_search(
         X_train, y_train, X_val, y_val,
         results_path, best_path, seed, base_params, param_grid,
-        make_model, evaluate_regression, pick_best_regression,
+        make_xrfm, evaluate_regression, pick_best_regression,
         fit_kwargs={"X_val": X_val, "y_val": y_val},
     )

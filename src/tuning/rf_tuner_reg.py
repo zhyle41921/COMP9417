@@ -1,8 +1,12 @@
 from sklearn.ensemble import RandomForestRegressor
-
 from src.tuning.common import evaluate_regression, pick_best_regression, run_grid_search
 
 SEED = 42
+
+
+def make_rf_regressor(params, seed):
+    return RandomForestRegressor(random_state=seed, n_jobs=-1, **params)
+
 
 def tune_rf(
     X_train,
@@ -26,11 +30,8 @@ def tune_rf(
             "max_features": ["sqrt", "log2", None],
         }
 
-    def make_model(params, seed):
-        return RandomForestRegressor(random_state=seed, n_jobs=-1, **params)
-
     return run_grid_search(
         X_train, y_train, X_val, y_val,
         results_path, best_path, seed, base_params, param_grid,
-        make_model, evaluate_regression, pick_best_regression,
+        make_rf_regressor, evaluate_regression, pick_best_regression,
     )
