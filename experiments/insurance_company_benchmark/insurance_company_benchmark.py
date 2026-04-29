@@ -2,6 +2,8 @@ SEED = 42
 N_THREADS = 4
 
 import os
+import sys
+from pathlib import Path
 
 os.environ["PYTHONHASHSEED"] = str(SEED)
 os.environ["OMP_NUM_THREADS"] = str(N_THREADS)
@@ -9,87 +11,32 @@ os.environ["MKL_NUM_THREADS"] = str(N_THREADS)
 os.environ["OPENBLAS_NUM_THREADS"] = str(N_THREADS)
 os.environ["VECLIB_MAXIMUM_THREADS"] = str(N_THREADS)
 
-import sys
 import json
-import time
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
-from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.decomposition import PCA
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import mutual_info_classif
 from sklearn.inspection import permutation_importance
-from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-
-from xrfm import xRFM
 from xgboost import XGBClassifier
-from sklearn.ensemble import RandomForestClassifier
+from xrfm import xRFM
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
 from experiments.insurance_company_benchmark.load_data import load_insurance_splits
-
-
-def load_best_params():
-    output_dir = ROOT / "outputs" / "insurance_company_benchmark"
-
-    with open(output_dir / "xrfm_best_params.json", "r") as f:
-        xrfm_result = json.load(f)
-
-    with open(output_dir / "xgb_best_params.json", "r") as f:
-        xgb_result = json.load(f)
-
-    with open(output_dir / "rf_best_params.json", "r") as f:
-        rf_result = json.load(f)
-
-    return xrfm_result["params"], xgb_result["params"], rf_result["params"]
+from src.utils.agop import to_numpy_agop
+from src.utils.experiment import (
+    evaluate_classification,
+    fit_with_time,
+    load_best_params,
+)
 
 
 def evaluate_model(model, X, y):
-    start = time.perf_counter()
-    y_pred = model.predict(X)
-    inference_time = time.perf_counter() - start
-
-    metrics = {
-        "accuracy": float(accuracy_score(y, y_pred)),
-        "inference_time_seconds": float(inference_time),
-        "inference_time_per_sample_seconds": float(inference_time / len(y)),
-    }
-
-    if hasattr(model, "predict_proba"):
-        y_score = np.asarray(model.predict_proba(X))
-
-        if y_score.ndim == 2 and y_score.shape[1] >= 2:
-            y_score = y_score[:, 1]
-        elif y_score.ndim == 2 and y_score.shape[1] == 1:
-            y_score = y_score[:, 0]
-
-        metrics["roc_auc"] = float(roc_auc_score(y, y_score))
-
-    return metrics
-
-
-def fit_with_time(model, *fit_args, **fit_kwargs):
-    start = time.perf_counter()
-    model.fit(*fit_args, **fit_kwargs)
-    training_time = time.perf_counter() - start
-
-    return model, float(training_time)
-
-
-def to_numpy_agop(agop):
-    if hasattr(agop, "detach"):
-        agop = agop.detach().cpu().numpy()
-    else:
-        agop = np.asarray(agop)
-
-    if agop.ndim == 1:
-        agop = np.diag(agop)
-
-    return agop
+    return evaluate_classification(model, X, y, include_total_time=True)
 
 
 def rank_features(df, score_col, rank_col):
@@ -581,7 +528,7 @@ def main():
         load_insurance_splits()
     )
 
-    best_xrfm_params, best_xgb_params, best_rf_params = load_best_params()
+    best_xrfm_params, best_xgb_params, best_rf_params = load_best_params(output_dir)
 
     X_train_np = np.asarray(X_train_df, dtype=np.float32)
     X_val_np = np.asarray(X_val_df, dtype=np.float32)
