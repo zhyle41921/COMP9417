@@ -1,5 +1,4 @@
 from xrfm import xRFM
-
 from src.tuning.common import (
     evaluate_classification,
     pick_best_classification,
@@ -8,10 +7,8 @@ from src.tuning.common import (
 
 SEED = 42
 
-
 def make_xrfm(params, seed):
     return xRFM(**params, random_state=seed)
-
 
 def tune_xrfm(
     X_train,

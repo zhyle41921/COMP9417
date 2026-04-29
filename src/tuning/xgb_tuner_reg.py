@@ -1,9 +1,7 @@
 from xgboost import XGBRegressor
-
 from src.tuning.common import evaluate_regression, pick_best_regression, run_grid_search
 
 SEED = 42
-
 
 def make_xgb_regressor(params, seed):
     return XGBRegressor(
@@ -14,7 +12,6 @@ def make_xgb_regressor(params, seed):
         tree_method="hist",
         **params,
     )
-
 
 def tune_xgb_regression(
     X_train,

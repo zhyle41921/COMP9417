@@ -1,13 +1,10 @@
 from xrfm import xRFM
-
 from src.tuning.common import evaluate_regression, pick_best_regression, run_grid_search
 
 SEED = 42
 
-
 def make_xrfm(params, seed):
     return xRFM(**params, random_state=seed)
-
 
 def tune_xrfm_regression(
     X_train,

@@ -7,10 +7,8 @@ from src.tuning.common import (
 
 SEED = 42
 
-
 def make_rf_classifier(params, seed):
     return RandomForestClassifier(random_state=seed, n_jobs=-1, **params)
-
 
 def tune_rf(
     X_train,

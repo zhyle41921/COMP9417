@@ -1,5 +1,4 @@
 from xgboost import XGBClassifier
-
 from src.tuning.common import (
     evaluate_classification,
     pick_best_classification,
@@ -7,7 +6,6 @@ from src.tuning.common import (
 )
 
 SEED = 42
-
 
 def make_xgb_classifier(params, seed):
     return XGBClassifier(
@@ -18,7 +16,6 @@ def make_xgb_classifier(params, seed):
         tree_method="hist",
         **params,
     )
-
 
 def tune_xgb(
     X_train,
